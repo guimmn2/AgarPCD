@@ -5,8 +5,8 @@ package game;
  * @author luismota
  *
  */
-public class PhoneyHumanPlayer extends Player {
-	public PhoneyHumanPlayer(int id, Game game, byte strength) {
+public class Slayer extends Player {
+	public Slayer(int id, Game game, byte strength) {
 		super(id, game, strength);
 	}
 

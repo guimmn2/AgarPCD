@@ -3,7 +3,7 @@ package gui;
 import java.util.Observable;
 import java.util.Observer;
 import game.Game;
-import game.PhoneyHumanPlayer;
+import game.Slayer;
 
 import javax.swing.JFrame;
 
@@ -12,7 +12,7 @@ public class GameGuiMain implements Observer {
 	private BoardJComponent boardGui;
 	private Game game;
 	
-	private static final int NUM_SLAYERS = 25;
+	private static final int NUM_SLAYERS = 1;
 
 	public GameGuiMain() {
 		super();
