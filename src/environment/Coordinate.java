@@ -29,4 +29,18 @@ public class Coordinate {
 	public Coordinate translate(Coordinate vector) {
 		return new Coordinate(x+vector.x, y+vector.y);
 	}
+	
+	public static Coordinate randomDirection() {
+		int r = (int) (Math.random() * 3);
+		switch (r) {
+		case 1:
+			return Direction.UP.getVector();
+		case 2:
+			return Direction.DOWN.getVector();
+		case 3:
+			return Direction.LEFT.getVector();
+		default:
+			return Direction.RIGHT.getVector();
+		}
+	}
 }

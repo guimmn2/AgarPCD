@@ -7,6 +7,8 @@ import environment.Cell;
 /**
  * Represents a player.
  * @author luismota
+ * 
+ * Parent class for Daemon (bot) and Slayer (human)
  *
  */
 public abstract class Player  {
@@ -21,7 +23,14 @@ public abstract class Player  {
 
 	// TODO: get player position from data in game
 	public Cell getCurrentCell() {
-		return null;
+		return game.getCellByPlayer(this);
+	}
+	
+	public Player(int id, Game game) {
+		this.id = id;
+		this.game = game;
+		currentStrength = (byte) (Math.random() * 3);
+		originalStrength = currentStrength;
 	}
 
 	public Player(int id, Game game, byte strength) {
@@ -61,12 +70,19 @@ public abstract class Player  {
 			return false;
 		return true;
 	}
+	
+	public boolean isAlive() {
+		return currentStrength > 0;
+	}
 
 	public byte getCurrentStrength() {
 		return currentStrength;
 	}
-
-
+	
+	public void increaseStrengthBy(byte strength) {
+		currentStrength += strength;
+	}
+	
 	public int getIdentification() {
 		return id;
 	}

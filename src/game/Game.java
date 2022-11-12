@@ -52,17 +52,54 @@ public class Game extends Observable {
 		}finally {lock.unlock();}
 		// To update GUI
 		notifyChange();
-		
+	}
+	
+	public void setPlayerPosition(Player player, Cell cell) {
+		//TODO verify obstacle
+		//TODO verify fight
+
+		//empty cell -> set position
+		Cell currCell = getCellByPlayer(player);
+		//delete player from old cell
+		if (currCell != null) {
+			currCell.setPlayer(null);
+		}
+		//move player to new cell
+		cell.setPlayer(player);
 	}
 	
 	public void createThreads(int num) {
 		Random rn = new Random();
 		for(int i=1; i<=num; i++)
-			new PlayerThread(i,this, (byte)(rn.nextInt(3 - 1 + 1) + 1)).start();
+			//new PlayerThread(i,this, (byte)(rn.nextInt(3 - 1 + 1) + 1)).start();
+			new DaemonThread(new Daemon(i, this)).start();
+	}
+	
+	/**
+	 * returns cell occupied by player, if the player is not occupying any cell returns null
+	 * @param player
+	 * @return Cell | null
+	 */
+	public Cell getCellByPlayer(Player player) {
+		//linear search. For now, at least ...
+		for (int i = 0; i < DIMX; i++) {
+			for (int j = 0; j < DIMY; j++) {
+				Player occupying = board[i][j].getPlayer();
+				if (occupying != null && occupying.equals(player)) {
+					return board[i][j];
+				}
+			}
+		}
+		return null;
 	}
 
 	public Cell getCell(Coordinate at) {
 		return board[at.x][at.y];
+	}
+
+	public Cell getRandomCell() {
+		Cell newCell=getCell(new Coordinate((int)(Math.random()*Game.DIMX),(int)(Math.random()*Game.DIMY)));
+		return newCell; 
 	}
 
 	/**	
@@ -71,10 +108,5 @@ public class Game extends Observable {
 	public void notifyChange() {
 		setChanged();
 		notifyObservers();
-	}
-
-	public Cell getRandomCell() {
-		Cell newCell=getCell(new Coordinate((int)(Math.random()*Game.DIMX),(int)(Math.random()*Game.DIMY)));
-		return newCell; 
 	}
 }
