@@ -1,23 +1,23 @@
 package game;
 
 public class DaemonThread extends Thread {
-	
+
 	private Daemon daemon;
-	
-	public DaemonThread(Daemon daemon) {
-		this.daemon = daemon;
-	}
-	
-	public long getId() {
-		return daemon.getIdentification();
+	private int DaemonThreadID;
+	private Game game;
+
+	public DaemonThread(int id, Game game, byte strength) {
+		DaemonThreadID = id;
+		this.game = game; 
+		daemon = new Daemon(id, game, strength);
 	}
 
 	@Override
 	public void run() {
-			try {
-				daemon.game.addPlayerToGame(daemon);
-				System.out.println(daemon.getCurrentCell().getPosition().toString());
-			} catch (InterruptedException e) {}
+		try {
+			game.addPlayerToGame(daemon);
+			sleep(Game.INITIAL_WAITING_TIME);
+			daemon.move();
+		} catch (InterruptedException e) {}
 	}
-
 }

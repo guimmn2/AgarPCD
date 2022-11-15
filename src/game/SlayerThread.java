@@ -1,12 +1,12 @@
 package game;
 
-public class PlayerThread extends Thread {
+public class SlayerThread extends Thread {
 	private Slayer slayer;
-	private int PlayerThreadID;
+	private int SlayerThreadID;
 	private Game game;
 	
-	public PlayerThread(int id, Game game, byte strength) {
-		PlayerThreadID = id;
+	public SlayerThread(int id, Game game, byte strength) {
+		SlayerThreadID = id;
 		this.game = game; 
 		slayer = new Slayer(id, game, strength);
 	}
@@ -15,6 +15,8 @@ public class PlayerThread extends Thread {
 	public void run() {
 			try {
 				game.addPlayerToGame(slayer);
+				sleep(Game.INITIAL_WAITING_TIME);
+				slayer.movement();
 			} catch (InterruptedException e) {}
 	}
 }

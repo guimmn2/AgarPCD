@@ -3,16 +3,18 @@ package gui;
 import java.util.Observable;
 import java.util.Observer;
 import game.Game;
-import game.Slayer;
 
 import javax.swing.JFrame;
+
+import environment.Coordinate;
+import environment.Direction;
 
 public class GameGuiMain implements Observer {
 	private JFrame frame = new JFrame("pcd.io");
 	private BoardJComponent boardGui;
 	private Game game;
-	
-	private static final int NUM_SLAYERS = 1;
+
+	private static final int NUM_SLAYERS = 50;
 
 	public GameGuiMain() {
 		super();

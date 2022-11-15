@@ -11,29 +11,34 @@ import environment.Cell;
  * Parent class for Daemon (bot) and Slayer (human)
  *
  */
-public abstract class Player  {
+public abstract class Contestant  {
 
 
 	protected  Game game;
 
 	private int id;
+	private Cell currcell;
 
 	private byte currentStrength;
 	protected byte originalStrength;
 
 	// TODO: get player position from data in game
 	public Cell getCurrentCell() {
-		return game.getCellByPlayer(this);
+		return currcell;
 	}
 	
-	public Player(int id, Game game) {
+	public void setCurrentCell(Cell currcell) {
+		this.currcell = currcell;
+	}
+	
+	public Contestant(int id, Game game) {
 		this.id = id;
 		this.game = game;
 		currentStrength = (byte) (Math.random() * 3);
 		originalStrength = currentStrength;
 	}
 
-	public Player(int id, Game game, byte strength) {
+	public Contestant(int id, Game game, byte strength) {
 		super();
 		this.id = id;
 		this.game=game;
@@ -42,6 +47,19 @@ public abstract class Player  {
 	}
 
 	public abstract boolean isHumanPlayer();
+	public abstract void movement();
+	
+	public void move() {
+		try {
+			while(isAlive() && currentStrength < 10) {
+				movement();
+				Thread.sleep(originalStrength*Game.REFRESH_INTERVAL);
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
 	public String toString() {
@@ -65,7 +83,7 @@ public abstract class Player  {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Player other = (Player) obj;
+		Contestant other = (Contestant) obj;
 		if (id != other.id)
 			return false;
 		return true;
@@ -81,6 +99,8 @@ public abstract class Player  {
 	
 	public void increaseStrengthBy(byte strength) {
 		currentStrength += strength;
+		if(currentStrength > 10)
+			currentStrength = 10;
 	}
 	
 	public int getIdentification() {
