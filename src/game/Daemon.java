@@ -1,19 +1,35 @@
 package game;
 
-public class Daemon extends Player {
+import environment.Cell;
+import environment.Coordinate;
 
-	public Daemon(int id, Game game) {
-		super(id, game);
-	}
+public class Daemon extends Contestant implements Runnable {
 
-	//TODO
-	public void move() {
+	public Daemon(int id, Game game, byte strength) {
+		super(id, game, strength);
 	}
 
 	@Override
 	public boolean isHumanPlayer() {
-		//temporarily true
-		return true;
+		return false;
+	}
+
+
+	@Override
+	public void movement() {
+		Cell nextCell = game.getCell(getCurrentCell().getPosition().translate(Coordinate.randomDirection()));
+		if(nextCell!=null)
+			nextCell.movePlayer(this);
+			//game.moveContestant(this, nextCell);
+	}
+
+	@Override
+	public void run() {
+		try {
+			game.addPlayerToGame(this);
+			Thread.sleep(Game.INITIAL_WAITING_TIME);
+			move();
+		} catch (InterruptedException e) {}
 	}
 
 }

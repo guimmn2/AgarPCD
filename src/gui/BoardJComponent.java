@@ -3,7 +3,7 @@ package gui;
 import environment.Coordinate;
 import environment.Direction;
 import game.Game;
-import game.Player;
+import game.Contestant;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -54,7 +54,7 @@ public class BoardJComponent extends JComponent implements KeyListener {
 			for (int y = 0; y < Game.DIMY; y++) {
 				Coordinate p = new Coordinate(x, y);
 
-				Player player = game.getCell(p).getPlayer();
+				Contestant player = game.getCell(p).getPlayer();
 				if(player!=null) {
 					// Fill yellow if there is a dead player
 					if(player.getCurrentStrength()==0) {
