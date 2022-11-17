@@ -20,6 +20,7 @@ public class Game extends Observable {
 	public static final double MAX_INITIAL_STRENGTH = 3;
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
 	public static final long INITIAL_WAITING_TIME = 2000;
+	
 
 	private Lock lock = new ReentrantLock();
 	private Condition available = lock.newCondition();
@@ -47,37 +48,6 @@ public class Game extends Observable {
 
 		// To update GUI
 		notifyChange();
-	}
-
-	public void moveContestant(Contestant player, Cell nextCell) {
-		// TODO verify obstacle
-		// TODO verify fight
-
-		if (!nextCell.isOcupied()) {
-			player.getCurrentCell().leave();
-			try {
-				nextCell.setPlayer(player);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			if (nextCell.getPlayer().isAlive() && nextCell.getPlayer().getCurrentStrength() < 10)
-				fight(player, nextCell.getPlayer());
-
-		}
-		notifyChange();
-	}
-
-	private void fight(Contestant one, Contestant two) {
-		if (one.getCurrentStrength() > two.getCurrentStrength()) {
-			one.increaseStrengthBy(two.getCurrentStrength());
-			two.increaseStrengthBy((byte) -two.getCurrentStrength());
-		} else {
-			two.increaseStrengthBy(two.getCurrentStrength());
-			one.increaseStrengthBy((byte) -one.getCurrentStrength());
-		}
-
 	}
 
 	public void createThreads(int num) {
