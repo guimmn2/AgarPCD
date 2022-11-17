@@ -3,7 +3,7 @@ package game;
 import environment.Cell;
 import environment.Coordinate;
 
-public class Daemon extends Contestant {
+public class Daemon extends Contestant implements Runnable {
 
 	public Daemon(int id, Game game, byte strength) {
 		super(id, game, strength);
@@ -19,7 +19,17 @@ public class Daemon extends Contestant {
 	public void movement() {
 		Cell nextCell = game.getCell(getCurrentCell().getPosition().translate(Coordinate.randomDirection()));
 		if(nextCell!=null)
-			game.moveContestant(this, nextCell);
+			nextCell.movePlayer(this);
+			//game.moveContestant(this, nextCell);
+	}
+
+	@Override
+	public void run() {
+		try {
+			game.addPlayerToGame(this);
+			Thread.sleep(Game.INITIAL_WAITING_TIME);
+			move();
+		} catch (InterruptedException e) {}
 	}
 
 }

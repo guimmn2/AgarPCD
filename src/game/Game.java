@@ -55,7 +55,6 @@ public class Game extends Observable {
 
 		if (!nextCell.isOcupied()) {
 			player.getCurrentCell().leave();
-			;
 			try {
 				nextCell.setPlayer(player);
 			} catch (InterruptedException e) {
@@ -85,7 +84,7 @@ public class Game extends Observable {
 		Random rn = new Random();
 		for (int i = 1; i <= num; i++)
 			// new SlayerThread(i,this, (byte)(rn.nextInt(3 - 1 + 1) + 1)).start();
-			new DaemonThread(i, this, (byte) (rn.nextInt(3 - 1 + 1) + 1)).start();
+			new Thread(new Daemon(i, this, (byte) (rn.nextInt(3 - 1 + 1) + 1))).start();
 	}
 
 	// /**

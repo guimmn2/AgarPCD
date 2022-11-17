@@ -29,6 +29,10 @@ public class Cell {
 	public boolean isOcupied() {
 		return player!=null;
 	}
+	
+	public boolean hasObstacle() {
+		return (player != null && (!player.isAlive() || player.getCurrentStrength() > 10));
+	}
 
 
 	public Contestant getPlayer() {
@@ -42,6 +46,11 @@ public class Cell {
 		lock.unlock();
 	}
 	
+	/**
+	 * used for setting players positions on init
+	 * @param player
+	 * @throws InterruptedException
+	 */
 	// Should not be used like this in the initial state: cell might be occupied, must coordinate this operation
 	public void setPlayer(Contestant player) throws InterruptedException {
 
@@ -84,6 +93,38 @@ public class Cell {
 		}finally{lock.unlock();};
 	}
 
+	/**
+	 * moves player to this cell,
+	 * immediately if cell not occupied,
+	 * if cell is occupied by a player that is alive and whose strength is inferior to 10 triggers a fight
+	 * STILL NOT IMPLEMENTED: if cell occupied by a dead player (obstacle) should sleep for 2 seconds or smthing, i dunno..
+	 * @param player
+	 */
+	public synchronized void movePlayer(Contestant player) {
+		if (!isOcupied()) {
+			player.getCurrentCell().leave();
+			this.player = player;
+			player.setCurrentCell(this);
+		} 
+		else if (hasObstacle()) {
+			System.out.println("player " + player.getIdentification() + " escolheu cell com obstáculo");
+		}
+		else {
+			Contestant occupying = getPlayer();
+			if (occupying.isAlive() && occupying.getCurrentStrength() < 10)
+				fight(player, occupying);
+		}
+		game.notifyChange();
+	}
 
+	private void fight(Contestant one, Contestant two) {
+		if (one.getCurrentStrength() > two.getCurrentStrength()) {
+			one.increaseStrengthBy(two.getCurrentStrength());
+			two.increaseStrengthBy((byte) -two.getCurrentStrength());
+		} else {
+			two.increaseStrengthBy(two.getCurrentStrength());
+			one.increaseStrengthBy((byte) -one.getCurrentStrength());
+		}
 
+	}
 }

@@ -1,5 +1,7 @@
 package environment;
 
+import java.util.Random;
+
 public class Coordinate {
 	public final int x;
 	public final int y;
@@ -31,8 +33,8 @@ public class Coordinate {
 	}
 	
 	public static Coordinate randomDirection() {
-		int r = (int) (Math.random() * 3);
-		switch (r) {
+		Random r = new Random();
+		switch (r.nextInt(4 - 1 + 1) + 1) {
 		case 1:
 			return Direction.UP.getVector();
 		case 2:
