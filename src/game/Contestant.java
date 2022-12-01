@@ -17,18 +17,13 @@ public abstract class Contestant  {
 	protected  Game game;
 
 	private int id;
-	private Cell currcell;
 
 	private byte currentStrength;
 	protected byte originalStrength;
 
 	// TODO: get player position from data in game
 	public Cell getCurrentCell() {
-		return currcell;
-	}
-	
-	public void setCurrentCell(Cell currcell) {
-		this.currcell = currcell;
+		return game.getCell(this);
 	}
 	
 	public Contestant(int id, Game game) {
@@ -91,6 +86,10 @@ public abstract class Contestant  {
 	
 	public boolean isAlive() {
 		return currentStrength > 0;
+	}
+	
+	public void kill() {
+		this.currentStrength = 0;
 	}
 
 	public byte getCurrentStrength() {

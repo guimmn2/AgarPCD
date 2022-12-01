@@ -14,7 +14,7 @@ public class GameGuiMain implements Observer {
 	private BoardJComponent boardGui;
 	private Game game;
 
-	private static final int NUM_SLAYERS = 50;
+	private static final int NUM_SLAYERS = 9;
 
 	public GameGuiMain() {
 		super();

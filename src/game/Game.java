@@ -11,9 +11,9 @@ import environment.Coordinate;
 
 public class Game extends Observable {
 
-	public static final int DIMY = 30;
-	public static final int DIMX = 30;
-	private static final int NUM_PLAYERS = 90;
+	public static final int DIMY = 5;
+	public static final int DIMX = 5;
+	private static final int NUM_PLAYERS = 10;
 	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME = 3;
 
 	public static final long REFRESH_INTERVAL = 400;
@@ -41,10 +41,11 @@ public class Game extends Observable {
 	 */
 	public void addPlayerToGame(Contestant player) throws InterruptedException {
 		Cell initialPos = getRandomCell();
+		System.out.println("spawning player: " + player.getIdentification());
 
-		lock.lock();
-		initialPos.setPlayer(player);
-		lock.unlock();
+		//lock.lock();
+		initialPos.spawnPlayer(player);
+		//lock.unlock();
 
 		// To update GUI
 		notifyChange();
@@ -81,6 +82,18 @@ public class Game extends Observable {
 		if (at.x >= DIMX || at.x < 0 || at.y >= DIMY || at.y < 0)
 			return null;
 		return board[at.x][at.y];
+	}
+	
+	public Cell getCell(Contestant player) {
+		for (int x = 0; x < Game.DIMX; x++) {
+			for (int y = 0; y < Game.DIMY; y++) {
+				Contestant match = board[x][y].getPlayer();
+				if (match != null && match.equals(player)) {
+					return board[x][y];
+				}
+			}
+		}
+		return null;
 	}
 
 	public Cell getRandomCell() {
