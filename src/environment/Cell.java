@@ -67,12 +67,14 @@ public class Cell {
 						+ getPlayer().getIdentification() + "| Wants to occupy: " + getPosition() + "]");
 				available.await();
 			}
+			System.out.println("ceased being occupied");
 			this.player = player;
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			lock.unlock();
+			game.notifyChange();
 		}
 	}
 
@@ -104,12 +106,12 @@ public class Cell {
 				if (occupying.isAlive() && occupying.getCurrentStrength() < 10)
 					fight(player, occupying);
 			}
-			game.notifyChange();
 
 		} catch (InterruptedException e) {
 			System.out.println("Daemon: " + player.getIdentification() + " interrompido após 2 segundos");
 		} finally {
 			currCellLock.unlock();
+			game.notifyChange();
 		}
 	}
 

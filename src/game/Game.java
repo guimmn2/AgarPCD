@@ -48,7 +48,7 @@ public class Game extends Observable {
 		//lock.unlock();
 
 		// To update GUI
-		notifyChange();
+		//notifyChange();
 	}
 
 	public void createThreads(int num) {
