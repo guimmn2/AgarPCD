@@ -11,8 +11,8 @@ import environment.Coordinate;
 
 public class Game extends Observable {
 
-	public static final int DIMY = 5;
-	public static final int DIMX = 5;
+	public static final int DIMY = 4;
+	public static final int DIMX = 4;
 	private static final int NUM_PLAYERS = 10;
 	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME = 3;
 
@@ -39,12 +39,13 @@ public class Game extends Observable {
 	 * @throws InterruptedException
 	 */
 	public void addPlayerToGame(Contestant player) throws InterruptedException {
-		Cell initialPos = getRandomCell();
-		System.out.println("spawning player: " + player.getIdentification());
+		//lock.lock();
+		//Cell initialPos = getRandomCell();
+		Cell initialPos = board[2][2];
 
-		// lock.lock();
 		initialPos.spawnPlayer(player);
-		// lock.unlock();
+
+		//lock.unlock();
 
 		// To update GUI
 		// notifyChange();
@@ -52,9 +53,9 @@ public class Game extends Observable {
 
 	public void createThreads(int num) {
 		Random rn = new Random();
-		for (int i = 1; i <= num; i++)
-			// new SlayerThread(i,this, (byte)(rn.nextInt(3 - 1 + 1) + 1)).start();
+		for (int i = 1; i <= num; i++) {
 			new Thread(new Daemon(i, this, (byte) (rn.nextInt(3 - 1 + 1) + 1))).start();
+		}
 	}
 
 	// /**
@@ -100,15 +101,16 @@ public class Game extends Observable {
 		return newCell;
 	}
 
-	public synchronized Cell getDisoccupiedCell() {
+	// for testing purposes
+	public synchronized Cell getOccupiedCell() {
 		for (int x = 0; x < Game.DIMX; x++) {
 			for (int y = 0; y < Game.DIMY; y++) {
-				if (!board[x][y].hasObstacle())
+				if (board[x][y].hasObstacle())
 					return board[x][y];
-				}
 			}
-		return null;
 		}
+		return null;
+	}
 
 	/**
 	 * Updates GUI. Should be called anytime the game state changes

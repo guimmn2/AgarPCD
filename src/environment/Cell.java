@@ -28,7 +28,7 @@ public class Cell {
 	}
 
 	public boolean isOcupied() {
-		return player != null;
+		return player != null && player.isAlive();
 	}
 
 	public boolean hasObstacle() {
@@ -59,25 +59,39 @@ public class Cell {
 	public synchronized void spawnPlayer(Contestant player) {
 		lock.lock();
 		try {
-			//TODO
+			// TODO
 			// if a player is put in a place where lies an obstacle. Unlikely, but possible
 			// gets same treatment as Daemon that chooses Cell with obstacle
+			/*
 			if (hasObstacle()) {
-				game.getDisoccupiedCell().spawnPlayer(player);
+				handleSpawnOnObstacle();
 			}
-			while (isOcupied()) {
-				System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupyed by: "
-						+ getPlayer().getIdentification() + "| Wants to occupy: " + getPosition() + "]");
+			*/
+			while (isOcupied() && !hasObstacle()) {
+				System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: " + getPlayer().getIdentification() + " | Player: " + player.getIdentification()  +" wants to occupy ]");
 				available.await();
 			}
-			System.out.println("ceased being occupied");
+			System.out.println("spot vacated, spawning player: " + player.getIdentification());
 			this.player = player;
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			lock.unlock();
 			game.notifyChange();
+		}
+	}
+
+	private synchronized void handleSpawnOnObstacle() {
+		try {
+			System.out.println("player: " + player.getIdentification() + " tried to spawn on obstacle");
+			new ThreadSlapper(Thread.currentThread()).start();
+			wait();
+		} catch (InterruptedException e) {
+			System.out.println("player: " + player.getIdentification() + " interrupted after 2 seconds");
+		} finally {
+			Cell newCell = game.getRandomCell();
+			System.out.println("trying to respawn player: " + player.getIdentification() + " on position: " + newCell.getPosition());
+			newCell.spawnPlayer(player);
 		}
 	}
 

@@ -17,10 +17,13 @@ public class Daemon extends Contestant implements Runnable {
 
 	@Override
 	public void movement() {
-		Cell nextCell = game.getCell(getCurrentCell().getPosition().translate(Coordinate.randomDirection()));
-		if(nextCell!=null)
-			nextCell.movePlayer(this);
-			//game.moveContestant(this, nextCell);
+		//check if has spawned
+		if (getCurrentCell() != null) {
+			Cell nextCell = game.getCell(getCurrentCell().getPosition().translate(Coordinate.randomDirection()));
+			if (nextCell != null) {
+				nextCell.movePlayer(this);
+			}
+		}
 	}
 
 	@Override
