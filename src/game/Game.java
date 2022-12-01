@@ -20,7 +20,6 @@ public class Game extends Observable {
 	public static final double MAX_INITIAL_STRENGTH = 3;
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
 	public static final long INITIAL_WAITING_TIME = 2000;
-	
 
 	private Lock lock = new ReentrantLock();
 	private Condition available = lock.newCondition();
@@ -43,12 +42,12 @@ public class Game extends Observable {
 		Cell initialPos = getRandomCell();
 		System.out.println("spawning player: " + player.getIdentification());
 
-		//lock.lock();
+		// lock.lock();
 		initialPos.spawnPlayer(player);
-		//lock.unlock();
+		// lock.unlock();
 
 		// To update GUI
-		//notifyChange();
+		// notifyChange();
 	}
 
 	public void createThreads(int num) {
@@ -83,7 +82,7 @@ public class Game extends Observable {
 			return null;
 		return board[at.x][at.y];
 	}
-	
+
 	public Cell getCell(Contestant player) {
 		for (int x = 0; x < Game.DIMX; x++) {
 			for (int y = 0; y < Game.DIMY; y++) {
@@ -100,6 +99,16 @@ public class Game extends Observable {
 		Cell newCell = getCell(new Coordinate((int) (Math.random() * Game.DIMX), (int) (Math.random() * Game.DIMY)));
 		return newCell;
 	}
+
+	public synchronized Cell getDisoccupiedCell() {
+		for (int x = 0; x < Game.DIMX; x++) {
+			for (int y = 0; y < Game.DIMY; y++) {
+				if (!board[x][y].hasObstacle())
+					return board[x][y];
+				}
+			}
+		return null;
+		}
 
 	/**
 	 * Updates GUI. Should be called anytime the game state changes

@@ -62,6 +62,9 @@ public class Cell {
 			//TODO
 			// if a player is put in a place where lies an obstacle. Unlikely, but possible
 			// gets same treatment as Daemon that chooses Cell with obstacle
+			if (hasObstacle()) {
+				game.getDisoccupiedCell().spawnPlayer(player);
+			}
 			while (isOcupied()) {
 				System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupyed by: "
 						+ getPlayer().getIdentification() + "| Wants to occupy: " + getPosition() + "]");
