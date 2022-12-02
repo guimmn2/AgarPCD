@@ -28,7 +28,7 @@ public class Cell {
 	}
 
 	public boolean isOcupied() {
-		return player != null && player.isAlive();
+		return player != null && (player.isAlive() && player.getCurrentStrength() < 10);
 	}
 
 	public boolean hasObstacle() {
@@ -62,12 +62,7 @@ public class Cell {
 			// TODO
 			// if a player is put in a place where lies an obstacle. Unlikely, but possible
 			// gets same treatment as Daemon that chooses Cell with obstacle
-			/*
-			if (hasObstacle()) {
-				handleSpawnOnObstacle();
-			}
-			*/
-			while (isOcupied() && !hasObstacle()) {
+			while (isOcupied()) {
 				System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: " + getPlayer().getIdentification() + " | Player: " + player.getIdentification()  +" wants to occupy ]");
 				available.await();
 			}
@@ -76,8 +71,8 @@ public class Cell {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
-			lock.unlock();
 			game.notifyChange();
+			lock.unlock();
 		}
 	}
 

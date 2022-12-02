@@ -40,8 +40,8 @@ public class Game extends Observable {
 	 */
 	public void addPlayerToGame(Contestant player) throws InterruptedException {
 		//lock.lock();
-		//Cell initialPos = getRandomCell();
-		Cell initialPos = board[2][2];
+		Cell initialPos = getRandomCell();
+		//Cell initialPos = board[2][2];
 
 		initialPos.spawnPlayer(player);
 
