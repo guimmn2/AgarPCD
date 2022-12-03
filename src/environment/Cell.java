@@ -16,6 +16,7 @@ public class Cell {
 
 	private Lock lock = new ReentrantLock();
 	private Condition available = lock.newCondition();
+	private Condition punishment = lock.newCondition();
 
 	public Cell(Coordinate position, Game g) {
 		super();
@@ -94,14 +95,15 @@ public class Cell {
 	 * 
 	 * @param player
 	 */
-	public synchronized void movePlayer(Contestant player) {
+	public void movePlayer(Contestant player) {
 		ReentrantLock movingPlayerCellLock = player.getCurrentCell().getLock();
 		movingPlayerCellLock.lock();
 		lock.lock();
 		try {
-			while (hasObstacle() && player instanceof Daemon) {
+			if (hasObstacle() && player instanceof Daemon) {
+				System.out.println("bot tried to move to: " + getPosition() + ", has obstacle");
 				new ThreadSlapper(Thread.currentThread()).start();
-				wait();
+				punishment.await();
 			}
 			if (!hasLivingPlayer()) {
 				player.getCurrentCell().leave();
@@ -113,7 +115,7 @@ public class Cell {
 			}
 
 		} catch (InterruptedException e) {
-			System.out.println("Daemon: " + player.getIdentification() + " interrompido após 2 segundos");
+			System.out.println("bot: " + player.getIdentification() + " interrupted after 2 seconds");
 		} finally {
 			game.notifyChange();
 			lock.unlock();

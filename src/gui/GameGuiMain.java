@@ -2,19 +2,15 @@ package gui;
 
 import java.util.Observable;
 import java.util.Observer;
-import game.Game;
 
 import javax.swing.JFrame;
 
-import environment.Coordinate;
-import environment.Direction;
+import game.Game;
 
 public class GameGuiMain implements Observer {
 	private JFrame frame = new JFrame("pcd.io");
 	private BoardJComponent boardGui;
 	private Game game;
-
-	private static final int NUM_SLAYERS = 9;
 
 	public GameGuiMain() {
 		super();
@@ -45,7 +41,7 @@ public class GameGuiMain implements Observer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		game.createThreads(NUM_SLAYERS);
+		game.createThreads();
 	}
 
 	@Override

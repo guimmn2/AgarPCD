@@ -13,7 +13,7 @@ public class Game extends Observable {
 
 	public static final int DIMY = 10;
 	public static final int DIMX = 10;
-	private static final int NUM_PLAYERS = 70;
+	private static final int NUM_PLAYERS = 50;
 	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME = 3;
 
 	public static final long REFRESH_INTERVAL = 400;
@@ -43,9 +43,9 @@ public class Game extends Observable {
 		initialPos.spawnPlayer(player);
 	}
 
-	public void createThreads(int num) {
+	public void createThreads() {
 		Random rn = new Random();
-		for (int i = 1; i <= num; i++) {
+		for (int i = 1; i <= NUM_PLAYERS; i++) {
 			new Thread(new Daemon(i, this, (byte) (rn.nextInt(3 - 1 + 1) + 1))).start();
 		}
 	}
