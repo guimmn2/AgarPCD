@@ -100,6 +100,7 @@ public class Cell {
 		lock.lock();
 		try {
 			while (hasObstacle() && player instanceof Daemon) {
+				System.out.println("bot tried to move to: " + getPosition() + ", has obstacle");
 				new ThreadSlapper(Thread.currentThread()).start();
 				wait();
 			}
@@ -113,7 +114,7 @@ public class Cell {
 			}
 
 		} catch (InterruptedException e) {
-			System.out.println("Daemon: " + player.getIdentification() + " interrompido após 2 segundos");
+			System.out.println("bot: " + player.getIdentification() + " interrupted after 2 seconds");
 		} finally {
 			game.notifyChange();
 			lock.unlock();

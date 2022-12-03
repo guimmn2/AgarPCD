@@ -2,6 +2,7 @@ package game;
 
 import java.util.Observable;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -13,18 +14,16 @@ public class Game extends Observable {
 
 	public static final int DIMY = 10;
 	public static final int DIMX = 10;
-	private static final int NUM_PLAYERS = 70;
+	private static final int NUM_PLAYERS = 15;
 	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME = 3;
 
 	public static final long REFRESH_INTERVAL = 400;
 	public static final double MAX_INITIAL_STRENGTH = 3;
 	public static final long MAX_WAITING_TIME_FOR_MOVE = 2000;
 	public static final long INITIAL_WAITING_TIME = 2000;
-
-	private Lock lock = new ReentrantLock();
-	private Condition available = lock.newCondition();
-
+	
 	protected Cell[][] board;
+	private int numFinishedPlayers;
 
 	public Game() {
 		board = new Cell[Game.DIMX][Game.DIMY];
@@ -33,7 +32,18 @@ public class Game extends Observable {
 			for (int y = 0; y < Game.DIMY; y++)
 				board[x][y] = new Cell(new Coordinate(x, y), this);
 	}
-
+	
+	public synchronized void incrementNumFinishedPlayers() {
+		numFinishedPlayers++;
+		//System.out.println("incrementing players that have finished to: " + numFinishedPlayers);
+	}
+	
+	public boolean running() {
+		//System.out.println("verifying running condition, nr players that have finished: " + numFinishedPlayers
+		//		+ ", should be " + NUM_FINISHED_PLAYERS_TO_END_GAME);
+		return numFinishedPlayers != NUM_FINISHED_PLAYERS_TO_END_GAME;
+	}
+	
 	/**
 	 * @param player
 	 * @throws InterruptedException
@@ -43,31 +53,12 @@ public class Game extends Observable {
 		initialPos.spawnPlayer(player);
 	}
 
-	public void createThreads(int num) {
+	public void createThreads() {
 		Random rn = new Random();
-		for (int i = 1; i <= num; i++) {
+		for (int i = 1; i <= NUM_PLAYERS; i++) {
 			new Thread(new Daemon(i, this, (byte) (rn.nextInt(3 - 1 + 1) + 1))).start();
 		}
 	}
-
-	// /**
-	// * returns cell occupied by player, if the player is not occupying any cell
-	// returns null
-	// * @param player
-	// * @return Cell | null
-	// */
-	// public Cell getCellByPlayer(Player player) {
-	// //linear search. For now, at least ...
-	// for (int i = 0; i < DIMX; i++) {
-	// for (int j = 0; j < DIMY; j++) {
-	// Player occupying = board[i][j].getPlayer();
-	// if (occupying != null && occupying.equals(player)) {
-	// return board[i][j];
-	// }
-	// }
-	// }
-	// return null;
-	// }
 
 	// Returns Null if cell out of bounds!
 	public Cell getCell(Coordinate at) {

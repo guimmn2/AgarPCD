@@ -14,8 +14,6 @@ public class GameGuiMain implements Observer {
 	private BoardJComponent boardGui;
 	private Game game;
 
-	private static final int NUM_SLAYERS = 9;
-
 	public GameGuiMain() {
 		super();
 		game = new Game();
@@ -45,7 +43,7 @@ public class GameGuiMain implements Observer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		game.createThreads(NUM_SLAYERS);
+		game.createThreads();
 	}
 
 	@Override
