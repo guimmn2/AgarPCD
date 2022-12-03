@@ -56,17 +56,17 @@ public class Cell {
 	 * @param player
 	 * @throws InterruptedException
 	 */
-	public synchronized void spawnPlayer(Contestant player) {
+	public void spawnPlayer(Contestant player) {
 		lock.lock();
 		try {
 			// TODO
 			// if a player is put in a place where lies an obstacle. Unlikely, but possible
 			// gets same treatment as Daemon that chooses Cell with obstacle
 			while (isOcupied()) {
-				System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: " + getPlayer().getIdentification() + " | Player: " + player.getIdentification()  +" wants to occupy ]");
+				//System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: " + getPlayer().getIdentification() + " | Player: " + player.getIdentification()  +" wants to occupy ]");
 				available.await();
 			}
-			System.out.println("spot vacated, spawning player: " + player.getIdentification());
+			//System.out.println("spot vacated, spawning player: " + player.getIdentification());
 			this.player = player;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -78,14 +78,14 @@ public class Cell {
 
 	private synchronized void handleSpawnOnObstacle() {
 		try {
-			System.out.println("player: " + player.getIdentification() + " tried to spawn on obstacle");
+			//System.out.println("player: " + player.getIdentification() + " tried to spawn on obstacle");
 			new ThreadSlapper(Thread.currentThread()).start();
 			wait();
 		} catch (InterruptedException e) {
-			System.out.println("player: " + player.getIdentification() + " interrupted after 2 seconds");
+			//System.out.println("player: " + player.getIdentification() + " interrupted after 2 seconds");
 		} finally {
 			Cell newCell = game.getRandomCell();
-			System.out.println("trying to respawn player: " + player.getIdentification() + " on position: " + newCell.getPosition());
+			//System.out.println("trying to respawn player: " + player.getIdentification() + " on position: " + newCell.getPosition());
 			newCell.spawnPlayer(player);
 		}
 	}
@@ -99,6 +99,7 @@ public class Cell {
 	 */
 	public synchronized void movePlayer(Contestant player) {
 		ReentrantLock currCellLock = player.getCurrentCell().getLock();
+		lock.lock();
 		currCellLock.lock();
 		try {
 			/*
@@ -106,6 +107,7 @@ public class Cell {
 			 * player.getIdentification() + " escolheu cell com obstáculo"); }
 			 */
 			while (hasObstacle() && player instanceof Daemon) {
+				//System.out.println("Daemon: " + player.getIdentification() + " tried to move to position with obstacle: " + getPosition());
 				new ThreadSlapper(Thread.currentThread()).start();
 				wait();
 			}
@@ -123,11 +125,13 @@ public class Cell {
 			System.out.println("Daemon: " + player.getIdentification() + " interrompido após 2 segundos");
 		} finally {
 			currCellLock.unlock();
+			lock.unlock();
 			game.notifyChange();
 		}
 	}
 
-	private void fight(Contestant one, Contestant two) {
+	private synchronized void fight(Contestant one, Contestant two) {
+		System.out.println("player one: " + one.getIdentification() + " fighting with player two: " + two.getIdentification());
 		if (one.getCurrentStrength() > two.getCurrentStrength()) {
 			one.increaseStrengthBy(two.getCurrentStrength());
 			two.increaseStrengthBy((byte) -two.getCurrentStrength());

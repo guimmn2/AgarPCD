@@ -11,9 +11,9 @@ import environment.Coordinate;
 
 public class Game extends Observable {
 
-	public static final int DIMY = 4;
-	public static final int DIMX = 4;
-	private static final int NUM_PLAYERS = 10;
+	public static final int DIMY = 10;
+	public static final int DIMX = 10;
+	private static final int NUM_PLAYERS = 70;
 	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME = 3;
 
 	public static final long REFRESH_INTERVAL = 400;
@@ -40,8 +40,8 @@ public class Game extends Observable {
 	 */
 	public void addPlayerToGame(Contestant player) throws InterruptedException {
 		//lock.lock();
-		Cell initialPos = getRandomCell();
-		//Cell initialPos = board[2][2];
+		//Cell initialPos = getRandomCell();
+		Cell initialPos = board[2][2];
 
 		initialPos.spawnPlayer(player);
 
