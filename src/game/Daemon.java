@@ -16,7 +16,6 @@ public class Daemon extends Contestant implements Runnable {
 
 	@Override
 	public void movement() {
-		// check if has spawned
 		Cell nextCell = game.getCell(getCurrentCell().getPosition().translate(Coordinate.randomDirection()));
 		if (nextCell != null) {
 			System.out.println("player: " + this.getIdentification() + " moving to position: " + nextCell.getPosition());

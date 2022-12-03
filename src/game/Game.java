@@ -14,7 +14,7 @@ public class Game extends Observable {
 
 	public static final int DIMY = 10;
 	public static final int DIMX = 10;
-	private static final int NUM_PLAYERS = 15;
+	private static final int NUM_PLAYERS = 40;
 	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME = 3;
 
 	public static final long REFRESH_INTERVAL = 400;
@@ -35,12 +35,9 @@ public class Game extends Observable {
 	
 	public synchronized void incrementNumFinishedPlayers() {
 		numFinishedPlayers++;
-		//System.out.println("incrementing players that have finished to: " + numFinishedPlayers);
 	}
 	
 	public boolean running() {
-		//System.out.println("verifying running condition, nr players that have finished: " + numFinishedPlayers
-		//		+ ", should be " + NUM_FINISHED_PLAYERS_TO_END_GAME);
 		return numFinishedPlayers != NUM_FINISHED_PLAYERS_TO_END_GAME;
 	}
 	

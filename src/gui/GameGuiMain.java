@@ -2,12 +2,10 @@ package gui;
 
 import java.util.Observable;
 import java.util.Observer;
-import game.Game;
 
 import javax.swing.JFrame;
 
-import environment.Coordinate;
-import environment.Direction;
+import game.Game;
 
 public class GameGuiMain implements Observer {
 	private JFrame frame = new JFrame("pcd.io");
