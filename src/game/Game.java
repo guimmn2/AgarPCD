@@ -13,7 +13,7 @@ public class Game extends Observable {
 
 	public static final int DIMY = 10;
 	public static final int DIMX = 10;
-	private static final int NUM_PLAYERS = 50;
+	private static final int NUM_PLAYERS = 40;
 	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME = 3;
 
 	public static final long REFRESH_INTERVAL = 400;

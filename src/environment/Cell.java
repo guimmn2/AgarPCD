@@ -101,7 +101,7 @@ public class Cell {
 		lock.lock();
 		try {
 			if (hasObstacle() && player instanceof Daemon) {
-				System.out.println("bot tried to move to: " + getPosition() + ", has obstacle");
+				System.out.println("bot: " + player.getIdentification() + " tried to move to: " + getPosition() + ", has obstacle");
 				new ThreadSlapper(Thread.currentThread()).start();
 				punishment.await();
 			}
