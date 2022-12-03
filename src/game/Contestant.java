@@ -17,18 +17,12 @@ public abstract class Contestant  {
 	protected  Game game;
 
 	private int id;
-	private Cell currcell;
 
 	private byte currentStrength;
 	protected byte originalStrength;
 
-	// TODO: get player position from data in game
 	public Cell getCurrentCell() {
-		return currcell;
-	}
-	
-	public void setCurrentCell(Cell currcell) {
-		this.currcell = currcell;
+		return game.getCell(this);
 	}
 	
 	public Contestant(int id, Game game) {
@@ -61,6 +55,32 @@ public abstract class Contestant  {
 		}
 	}
 	
+	public boolean isObstacle() {
+		return (!isAlive() || currentStrength == 10);
+	}
+	
+	public boolean isAlive() {
+		return currentStrength > 0;
+	}
+	
+	public void kill() {
+		this.currentStrength = 0;
+	}
+
+	public byte getCurrentStrength() {
+		return currentStrength;
+	}
+	
+	public void increaseStrengthBy(byte strength) {
+		currentStrength += strength;
+		if(currentStrength > 10)
+			currentStrength = 10;
+	}
+	
+	public int getIdentification() {
+		return id;
+	}
+	
 	@Override
 	public String toString() {
 		return "Player [id=" + id + ", currentStrength=" + currentStrength + ", getCurrentCell()=" + getCurrentCell()
@@ -87,23 +107,5 @@ public abstract class Contestant  {
 		if (id != other.id)
 			return false;
 		return true;
-	}
-	
-	public boolean isAlive() {
-		return currentStrength > 0;
-	}
-
-	public byte getCurrentStrength() {
-		return currentStrength;
-	}
-	
-	public void increaseStrengthBy(byte strength) {
-		currentStrength += strength;
-		if(currentStrength > 10)
-			currentStrength = 10;
-	}
-	
-	public int getIdentification() {
-		return id;
 	}
 }

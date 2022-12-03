@@ -14,13 +14,14 @@ public class Daemon extends Contestant implements Runnable {
 		return false;
 	}
 
-
 	@Override
 	public void movement() {
+		// check if has spawned
 		Cell nextCell = game.getCell(getCurrentCell().getPosition().translate(Coordinate.randomDirection()));
-		if(nextCell!=null)
+		if (nextCell != null) {
+			System.out.println("player: " + this.getIdentification() + " moving to position: " + nextCell.getPosition());
 			nextCell.movePlayer(this);
-			//game.moveContestant(this, nextCell);
+		}
 	}
 
 	@Override
@@ -29,7 +30,8 @@ public class Daemon extends Contestant implements Runnable {
 			game.addPlayerToGame(this);
 			Thread.sleep(Game.INITIAL_WAITING_TIME);
 			move();
-		} catch (InterruptedException e) {}
+		} catch (InterruptedException e) {
+		}
 	}
 
 }

@@ -1,0 +1,11 @@
+Cell
+-spawn(player)
+-move(player)
+-hasObstacle()
+-hasLivingPlayer() //para substituir os isOccupied()
+-fight(movingPlayer) //luta do jogador que vai para a Cell (movingPlayer) contra o jogador que já lá está, i.e: associado ao atributo player
+
+Contestant
+(...)
+-kill()
+-movement() //implementação do movimento

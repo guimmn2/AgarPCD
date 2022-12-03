@@ -1,0 +1,2 @@
+- Player.getCurrentStrength() na class Cell dá NullPtrExcp às vezes, não sei porquê
+- Adição de jogadores (spawn) tem de ser síncrono? parece ser a única forma de resolver um eventual spawn no obstáculo, mas não percebo porquê... Só dessa forma é que a thread correcta é interrompida

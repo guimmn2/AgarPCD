@@ -11,9 +11,9 @@ import environment.Coordinate;
 
 public class Game extends Observable {
 
-	public static final int DIMY = 30;
-	public static final int DIMX = 30;
-	private static final int NUM_PLAYERS = 90;
+	public static final int DIMY = 10;
+	public static final int DIMX = 10;
+	private static final int NUM_PLAYERS = 40;
 	private static final int NUM_FINISHED_PLAYERS_TO_END_GAME = 3;
 
 	public static final long REFRESH_INTERVAL = 400;
@@ -40,51 +40,14 @@ public class Game extends Observable {
 	 */
 	public void addPlayerToGame(Contestant player) throws InterruptedException {
 		Cell initialPos = getRandomCell();
-
-		lock.lock();
-		initialPos.setPlayer(player);
-		lock.unlock();
-
-		// To update GUI
-		notifyChange();
+		initialPos.spawnPlayer(player);
 	}
 
-	public void moveContestant(Contestant player, Cell nextCell) {
-		// TODO verify obstacle
-		// TODO verify fight
-
-		if (!nextCell.isOcupied()) {
-			player.getCurrentCell().leave();
-			try {
-				nextCell.setPlayer(player);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			if (nextCell.getPlayer().isAlive() && nextCell.getPlayer().getCurrentStrength() < 10)
-				fight(player, nextCell.getPlayer());
-
-		}
-		notifyChange();
-	}
-
-	private void fight(Contestant one, Contestant two) {
-		if (one.getCurrentStrength() > two.getCurrentStrength()) {
-			one.increaseStrengthBy(two.getCurrentStrength());
-			two.increaseStrengthBy((byte) -two.getCurrentStrength());
-		} else {
-			two.increaseStrengthBy(two.getCurrentStrength());
-			one.increaseStrengthBy((byte) -one.getCurrentStrength());
-		}
-
-	}
-
-	public void createThreads(int num) {
+	public void createThreads() {
 		Random rn = new Random();
-		for (int i = 1; i <= num; i++)
-			// new SlayerThread(i,this, (byte)(rn.nextInt(3 - 1 + 1) + 1)).start();
+		for (int i = 1; i <= NUM_PLAYERS; i++) {
 			new Thread(new Daemon(i, this, (byte) (rn.nextInt(3 - 1 + 1) + 1))).start();
+		}
 	}
 
 	// /**
@@ -113,9 +76,32 @@ public class Game extends Observable {
 		return board[at.x][at.y];
 	}
 
+	public Cell getCell(Contestant player) {
+		for (int x = 0; x < Game.DIMX; x++) {
+			for (int y = 0; y < Game.DIMY; y++) {
+				Contestant match = board[x][y].getPlayer();
+				if (match != null && match.equals(player)) {
+					return board[x][y];
+				}
+			}
+		}
+		return null;
+	}
+
 	public Cell getRandomCell() {
 		Cell newCell = getCell(new Coordinate((int) (Math.random() * Game.DIMX), (int) (Math.random() * Game.DIMY)));
 		return newCell;
+	}
+
+	// for testing purposes
+	public synchronized Cell getOccupiedCell() {
+		for (int x = 0; x < Game.DIMX; x++) {
+			for (int y = 0; y < Game.DIMY; y++) {
+				if (board[x][y].hasObstacle())
+					return board[x][y];
+			}
+		}
+		return null;
 	}
 
 	/**
