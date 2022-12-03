@@ -26,24 +26,35 @@ public class Cell {
 	public Coordinate getPosition() {
 		return position;
 	}
+	
+	public boolean isEmpty() {
+		return player == null;
+	}
 
-	public boolean isOcupied() {
-		return player != null && (player.isAlive() && player.getCurrentStrength() < 10);
+	public boolean hasLivingPlayer() {
+		return (!isEmpty() && player.isAlive());
 	}
 
 	public boolean hasObstacle() {
-		return (player != null && (!player.isAlive() || player.getCurrentStrength() > 10));
+		return (!isEmpty() && player.isObstacle());
 	}
 
 	public Contestant getPlayer() {
 		return player;
 	}
+	
+	private void setPlayer(Contestant player) {
+		this.player = player;
+	}
 
 	public void leave() {
 		lock.lock();
-		player = null;
-		available.signalAll();
-		lock.unlock();
+		try {
+			player = null;
+			available.signalAll();
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	public ReentrantLock getLock() {
@@ -62,31 +73,17 @@ public class Cell {
 			// TODO
 			// if a player is put in a place where lies an obstacle. Unlikely, but possible
 			// gets same treatment as Daemon that chooses Cell with obstacle
-			while (isOcupied()) {
-				//System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: " + getPlayer().getIdentification() + " | Player: " + player.getIdentification()  +" wants to occupy ]");
+			while (hasLivingPlayer()) {
+				System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: " + getPlayer().getIdentification() + " | Player: " + player.getIdentification()  +" wants to occupy ]");
 				available.await();
 			}
-			//System.out.println("spot vacated, spawning player: " + player.getIdentification());
+			System.out.println("spot vacated, spawning player: " + player.getIdentification());
 			this.player = player;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			game.notifyChange();
 			lock.unlock();
-		}
-	}
-
-	private synchronized void handleSpawnOnObstacle() {
-		try {
-			//System.out.println("player: " + player.getIdentification() + " tried to spawn on obstacle");
-			new ThreadSlapper(Thread.currentThread()).start();
-			wait();
-		} catch (InterruptedException e) {
-			//System.out.println("player: " + player.getIdentification() + " interrupted after 2 seconds");
-		} finally {
-			Cell newCell = game.getRandomCell();
-			//System.out.println("trying to respawn player: " + player.getIdentification() + " on position: " + newCell.getPosition());
-			newCell.spawnPlayer(player);
 		}
 	}
 
@@ -98,23 +95,17 @@ public class Cell {
 	 * @param player
 	 */
 	public synchronized void movePlayer(Contestant player) {
-		ReentrantLock currCellLock = player.getCurrentCell().getLock();
+		ReentrantLock movingPlayerCellLock = player.getCurrentCell().getLock();
+		movingPlayerCellLock.lock();
 		lock.lock();
-		currCellLock.lock();
 		try {
-			/*
-			 * if (hasObstacle()) { System.out.println("player " +
-			 * player.getIdentification() + " escolheu cell com obstáculo"); }
-			 */
 			while (hasObstacle() && player instanceof Daemon) {
-				//System.out.println("Daemon: " + player.getIdentification() + " tried to move to position with obstacle: " + getPosition());
 				new ThreadSlapper(Thread.currentThread()).start();
 				wait();
 			}
-
-			if (!isOcupied()) {
+			if (!hasLivingPlayer()) {
 				player.getCurrentCell().leave();
-				this.player = player;
+				setPlayer(player);
 			} else {
 				Contestant occupying = getPlayer();
 				if (occupying.isAlive() && occupying.getCurrentStrength() < 10)
@@ -124,13 +115,13 @@ public class Cell {
 		} catch (InterruptedException e) {
 			System.out.println("Daemon: " + player.getIdentification() + " interrompido após 2 segundos");
 		} finally {
-			currCellLock.unlock();
-			lock.unlock();
 			game.notifyChange();
+			lock.unlock();
+			movingPlayerCellLock.unlock();
 		}
 	}
 
-	private synchronized void fight(Contestant one, Contestant two) {
+	private void fight(Contestant one, Contestant two) {
 		System.out.println("player one: " + one.getIdentification() + " fighting with player two: " + two.getIdentification());
 		if (one.getCurrentStrength() > two.getCurrentStrength()) {
 			one.increaseStrengthBy(two.getCurrentStrength());
