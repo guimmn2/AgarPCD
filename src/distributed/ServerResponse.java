@@ -1,6 +1,8 @@
 package distributed;
 
-public class ServerResponse {
+import java.io.Serializable;
+
+public class ServerResponse implements Serializable {
 
 	private int id;
 	// Slayer

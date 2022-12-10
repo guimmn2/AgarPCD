@@ -1,9 +1,8 @@
 package distributed;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -13,12 +12,10 @@ import game.Slayer;
 
 public class Client {
 
-//	private ObjectInputStream in;
-//	private ObjectOutputStream out;
+	private ObjectInputStream in;
+	private PrintWriter out;
 	private Socket socket;
 
-	private BufferedReader in;
-	private PrintWriter out;
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		Client clt = new Client();
@@ -31,23 +28,18 @@ public class Client {
 		InetAddress addr = InetAddress.getByName(null);
 		socket = new Socket(addr, Server.PORT);
 		System.out.println("connecting to address: " + addr + " on port: " + Server.PORT);
-//		in = new ObjectInputStream(socket.getInputStream());
-//		out = new ObjectOutputStream(socket.getOutputStream());
-		in = new BufferedReader(new InputStreamReader(
-				socket.getInputStream()));
+		in = new ObjectInputStream(socket.getInputStream());
+		System.out.println("in done");
 		out = new PrintWriter(new BufferedWriter(
 				new OutputStreamWriter(socket.getOutputStream())),
 				true);
+		System.out.println("out done");
 	}
 
 	public void communicateWithServer() throws IOException, ClassNotFoundException {
-//		ClientRequest req = new ClientRequest(null);
-//		out.writeObject(req);
-//		System.out.println("sent request to server");
-//		ServerResponse resp = ((ServerResponse) in.readObject());
-		String resp = in.readLine();
-//		System.out.println("assigned id by server: " + resp.getId());
-		System.out.println("assigned id by server: " + resp);
+		System.out.println("sent request to server");
+		ServerResponse resp = ((ServerResponse) in.readObject());
+		System.out.println("assigned id by server: " + resp.getId());
 	}
 
 	private Slayer slayer;

@@ -1,6 +1,8 @@
 package distributed;
 
-public class ClientRequest {
+import java.io.Serializable;
+
+public class ClientRequest implements Serializable {
 	
 	private Integer id;
 	//private Something input;
