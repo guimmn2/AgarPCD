@@ -2,10 +2,6 @@ package game;
 
 import java.util.Observable;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import environment.Cell;
 import environment.Coordinate;
