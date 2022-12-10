@@ -44,7 +44,9 @@ public class Server {
 		public void run() {
 			System.out.println("starting to serve client");
 			try {
-				serve();
+				while (true) {
+					serve();
+				}
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
