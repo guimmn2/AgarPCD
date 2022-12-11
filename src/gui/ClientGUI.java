@@ -1,26 +1,24 @@
 package gui;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.util.List;
 
 import javax.swing.JFrame;
 
+import environment.Cell;
+import game.Contestant;
 import game.Game;
 
-public class GameGuiMain implements Observer {
+public class ClientGUI{
 	private JFrame frame = new JFrame("pcd.io");
 	private BoardJComponent boardGui;
 	private Game game;
-
-	public GameGuiMain(Game game) {
+	
+	public ClientGUI() {
 		super();
-		this.game = game;
-		game.addObserver(this);
-
+		game = new Game();
 		buildGui();
-
 	}
-
+	
 	private void buildGui() {
 		boardGui = new BoardJComponent(game, false);
 		frame.add(boardGui);
@@ -30,7 +28,7 @@ public class GameGuiMain implements Observer {
 		frame.setLocation(0, 150);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-
+	
 	public void init()  {
 		frame.setVisible(true);
 
@@ -41,16 +39,12 @@ public class GameGuiMain implements Observer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		game.createThreads();
 	}
-
-	@Override
-	public void update(Observable o, Object arg) {
+	
+	public void setContestants(List<Contestant> contestants) {
+		for(Contestant c:contestants) 
+			game.addPlayerToCell(c, c.getCurrentCell().getPosition());
 		boardGui.repaint();
 	}
-
-	public Game getGame() {
-		return game;
-	}
-
+	
 }

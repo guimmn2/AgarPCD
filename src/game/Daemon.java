@@ -18,7 +18,7 @@ public class Daemon extends Contestant implements Runnable {
 	public void movement() {
 		Cell nextCell = game.getCell(getCurrentCell().getPosition().translate(Coordinate.randomDirection()));
 		if (nextCell != null) {
-			System.out.println("player: " + this.getIdentification() + " moving to position: " + nextCell.getPosition());
+			//System.out.println("player: " + this.getIdentification() + " moving to position: " + nextCell.getPosition());
 			nextCell.movePlayer(this);
 		}
 	}

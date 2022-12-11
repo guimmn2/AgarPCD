@@ -7,69 +7,138 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class Server {
+import game.Contestant;
+import game.Game;
+import game.Slayer;
+import gui.GameGuiMain;
+import gui.ClientGUI;
 
+public class Server{
+
+	private ServerSocket ss;
 	public static final int PORT = 8080;
+	Map<Slayer,ClientHandler> clientMap = new HashMap<Slayer,ClientHandler>();
+	Game game;
+	ClientGUI gui;
 
-	private ArrayList<Integer> playerIds = new ArrayList<>();
+	//private ClientHandlerSlapper clienthandlerslapper;
 
-	public static void main(String[] args) throws IOException {
-		new Server().startServer();
+	public static void main(String[] args) {
+		new Server().initServer();
 	}
 
-	public void startServer() throws IOException {
-		System.out.println("server starting...");
-		ServerSocket ss = new ServerSocket(PORT);
+	public void initServer() {
+
 		try {
-			while (true) {
-				Socket socket = ss.accept();
-				System.out.println("connection received: " + socket.toString());
-				new ClientHandler(socket).start();
-			}
-		} finally {
-			ss.close();
+			System.out.println("Server starting...");
+			ss = new ServerSocket(PORT);
+			startGame();
+			startServer();
+
+		}catch(IOException e) {
+			System.err.println("Cannot init Server");
+			System.exit(1);
 		}
 	}
 
-	public class ClientHandler extends Thread {
+	//Start Game Here?
+	public void startGame() {
+		game = new Game();
+		new Thread(new GUIThread(game)).start();
+		//clienthandlerslapper = new ClientHandlerSlapper(Game.REFRESH_INTERVAL);
+		//clienthandlerslapper.start();
+	}
+
+	public void startServer() {
+		while (true) {
+			try {
+				System.out.println("Waiting for connection...");
+				Socket conSocket = ss.accept();
+
+				System.out.println("Connection received: " + conSocket.toString());
+				ClientHandler ch = new ClientHandler(conSocket);
+
+				//clienthandlerslapper.addClientHandler(ch);
+
+				//registerSlayer(ch);
+				ch.start();
+
+			} catch (IOException e) {
+				System.err.println("Error starting Server");
+				break;
+			}
+		}
+
+		try {
+			ss.close();
+		}catch(IOException e) {
+			System.err.println("Error on server close");
+		}
+	}
+
+	private void registerSlayer(ClientHandler ch) {
+		Slayer sl = new Slayer(0, game, (byte)5);
+		try {
+			game.addPlayerToGame(sl);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			System.err.println("Error adding player");
+		}
+		clientMap.put(sl, ch);
+	}
+
+	private class ClientHandler extends Thread {
 		private ObjectOutputStream out;
 		private BufferedReader in;
+		private Socket conSocket;
 
 		public ClientHandler(Socket socket) throws IOException {
-			setup(socket);
+			conSocket = socket;
 		}
 
 		@Override
 		public void run() {
 			System.out.println("starting to serve client");
 			try {
-				while (true) {
-					serve();
+				setup();
+				serve();
+			} catch (IOException e) {
+				System.err.println("Error in server-client connection");
+			} finally {
+				try{
+					in.close(); 
+					out.close();
+					conSocket.close();
+				} catch (IOException e) {
+					System.err.println("Error while closing server-client connection... Abort");
 				}
-			} catch (IOException | ClassNotFoundException e) {
-				e.printStackTrace();
 			}
 		}
 
-		void setup(Socket socket) throws IOException {
-			out = new ObjectOutputStream(socket.getOutputStream());
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//			in = new ObjectInputStream(socket.getInputStream());
+		void setup() throws IOException {
+			out = new ObjectOutputStream(conSocket.getOutputStream());
+			in = new BufferedReader(new InputStreamReader(conSocket.getInputStream()));
 		}
 
-		private void serve() throws IOException, ClassNotFoundException {
-			System.out.println("waiting for request...");
-//			ClientRequest req = ((ClientRequest) in.readObject());
-			System.out.println("request received");
-			// spawn request
-//			if (req.getId() == null) {
-//				int id = playerIds.size() + 1;
-//				System.out.println("spawn request, assign id: " + id);
-//				out.writeObject(new ServerResponse(id));
-//			}
-			out.writeObject(new ServerResponse(playerIds.size() + 1));
+		private void serve() throws IOException {
+			
+			while(true) {
+				try{//Implementar as merditxas todas
+
+					System.out.println("Sending contestants...");
+					ArrayList<Contestant> contestants = game.getContestants();
+					System.out.println("AAAAAAAAAAAAAAAAA" + contestants.size());
+					out.writeObject(new ServerResponse(contestants));
+					Thread.sleep(Game.REFRESH_INTERVAL);
+				}catch(InterruptedException e) {
+					System.err.println("Could Not Send Board.");
+				}
+
+			}
 		}
 	}
-
 }

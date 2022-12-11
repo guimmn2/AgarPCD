@@ -1,8 +1,9 @@
 package environment;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Coordinate {
+public class Coordinate implements Serializable {
 	public final int x;
 	public final int y;
 
