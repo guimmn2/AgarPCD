@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 
 import distributed.PlayerDetails;
 import environment.Cell;
+import environment.Direction;
 import game.Contestant;
 import game.Daemon;
 import game.Game;
@@ -60,5 +61,10 @@ public class ClientGUI implements Observer{
 	
 	public BoardJComponent getUI() {
 		return boardGui;
+	}
+	
+	public Direction getLastDir() {
+		Direction dir = boardGui.getLastPressedDirection();
+		return dir;
 	}
 }

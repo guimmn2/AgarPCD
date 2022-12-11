@@ -11,6 +11,7 @@ import java.util.List;
 
 import environment.Direction;
 import game.Game;
+import gui.BoardJComponent;
 import gui.ClientGUI;
 
 public class Client {
@@ -87,11 +88,14 @@ public class Client {
 	public class InputSender extends Thread {
 
 		private void verifyAndSendInput() {
-			Direction dir = clientGUI.getUI().getLastPressedDirection();
+
+			Direction dir = clientGUI.getLastDir();
 			if (dir != null) {
-				System.out.println("sending dir to server: " + dir.getVector().toString());
-				out.write(dir.getVector().toString());
-				clientGUI.getUI().clearLastPressedDirection();
+				System.out.println("Thread "+ dir);
+
+//				System.out.println("sending dir to server: " + dir.getVector().toString());
+//				out.write(dir.getVector().toString());
+//				clientGUI.getUI().clearLastPressedDirection();
 			}
 		}
 
