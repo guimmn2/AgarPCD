@@ -23,6 +23,7 @@ public class Client {
 	private String hostName;
 
 	private ClientGUI clientGUI;
+	private Game game;
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		Client clt = new Client("localhost");
@@ -65,15 +66,17 @@ public class Client {
 	public void communicateWithServer(){
 		clientGUI =  new ClientGUI();
 		clientGUI.init();
+		game = clientGUI.getGame();
 
 		try {
 			while(true) {
 				System.out.println("Waiting for server msg.");
 				GameState gameState = (GameState) in.readObject();
-				List<PlayerDetails> playerDetailsList = gameState.getPlayerDetailsList();
+				System.out.println("Received server msg.");
+				game.clearBoard();
 				
-				System.out.println("B");
-				playerDetailsList.forEach(o -> {System.out.println(o);});
+				List<PlayerDetails> playerDetailsList = gameState.getPlayerDetailsList();
+				game.setContestants(playerDetailsList);
 				
 			}
 		}catch(IOException | ClassNotFoundException e) {

@@ -4,6 +4,7 @@ package game;
 
 import java.io.Serializable;
 
+import distributed.PlayerDetails;
 import environment.Cell;
 
 /**
@@ -41,7 +42,7 @@ public abstract class Contestant  implements Serializable{
 		currentStrength=strength;
 		originalStrength=strength;
 	}
-
+	
 	public abstract boolean isHumanPlayer();
 	public abstract void movement();
 	

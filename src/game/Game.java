@@ -7,6 +7,7 @@ import java.util.Observable;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
+import distributed.PlayerDetails;
 import environment.Cell;
 import environment.Coordinate;
 
@@ -28,6 +29,8 @@ public class Game extends Observable implements Serializable {
 	private List<Thread> danoninhos = new ArrayList<>();
 	public transient CountDownLatch portõesDaQuinta = new CountDownLatch(NUM_FINISHED_PLAYERS_TO_END_GAME);
 	private boolean running;
+	private int usableIdentifier = 0;
+	
 	
 	//private int numFinishedPlayers;
 
@@ -67,12 +70,19 @@ public class Game extends Observable implements Serializable {
 		getCell(pos).spawnPlayer(player);
 	}
 	
+	public int getUsableIdentifier() {
+		int ID = usableIdentifier;
+		usableIdentifier++;
+		return ID;
+	}
+	
 	public void createThreads() {
 		Random rn = new Random();
-		for (int i = 1; i <= NUM_PLAYERS; i++) {
-			 Thread yogi = new Thread(new Daemon(i, this, (byte) (rn.nextInt(3 - 1 + 1) + 1)));
-			 danoninhos.add(yogi);
-			 yogi.start();
+		for (int i = 0; i <= NUM_PLAYERS; i++) {
+			usableIdentifier = i+1;
+			Thread yogi = new Thread(new Daemon(i, this, (byte) (rn.nextInt(3 - 1 + 1) + 1)));
+			danoninhos.add(yogi);
+			yogi.start();
 		}
 		
 		try {
@@ -89,8 +99,25 @@ public class Game extends Observable implements Serializable {
 	}
 	
 	public ArrayList<Contestant> getContestants(){
-		System.out.println("FLA FLA " + contestants.size());
 		return contestants;
+	}
+	
+	public void setContestants(List<PlayerDetails> playerDetailsList) {
+		for(PlayerDetails pd: playerDetailsList) {
+			Contestant c;
+			if(pd.isHuman()) {
+				c = new Slayer(pd.getId(), this, pd.getStrength());
+			}else {
+				c = new Daemon(pd.getId(), this, pd.getStrength());
+			}
+			this.addPlayerToCell(c, pd.getCoordinate());		
+		}
+	}
+	
+	public void clearBoard() {
+		for (int x = 0; x < Game.DIMX; x++)
+			for (int y = 0; y < Game.DIMY; y++)
+				board[x][y] = new Cell(new Coordinate(x, y), this);
 	}
 
 	// Returns Null if cell out of bounds!

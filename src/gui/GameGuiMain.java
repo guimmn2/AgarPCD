@@ -36,7 +36,7 @@ public class GameGuiMain implements Observer {
 
 		// Demo players, should be deleted
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(1);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

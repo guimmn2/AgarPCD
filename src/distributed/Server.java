@@ -64,7 +64,7 @@ public class Server{
 
 				//clienthandlerslapper.addClientHandler(ch);
 
-				//registerSlayer(ch);
+				registerSlayer(ch);
 				ch.start();
 
 			} catch (IOException e) {
@@ -81,7 +81,8 @@ public class Server{
 	}
 
 	private void registerSlayer(ClientHandler ch) {
-		Slayer sl = new Slayer(0, game, (byte)5);
+		System.out.println("Slayer ID "+game.getUsableIdentifier());
+		Slayer sl = new Slayer(game.getUsableIdentifier(), game, (byte)5);
 		try {
 			game.addPlayerToGame(sl);
 		} catch (InterruptedException e) {
@@ -125,30 +126,30 @@ public class Server{
 		}
 
 		private void serve() throws IOException {
-			
-			while(true) {
-				try{//Implementar as merditxas todas
 
+
+			try{//Implementar as merditxas todas
+				while(true) {
 					System.out.println("Sending contestants...");
 					ArrayList<Contestant> contestants = game.getContestants();
-				
+
 					List<PlayerDetails> playerDetailsList = new ArrayList<>();
 					for(Contestant c : contestants) {
+						if(c.getCurrentCell() == null) {
+							continue;
+						}
 						PlayerDetails playerDetails = new PlayerDetails(c.getIdentification(), c.getCurrentStrength(), c.getCurrentCell().getPosition(), c.isHumanPlayer());
 						playerDetailsList.add(playerDetails);
 					}
-					
+
 					GameState gameState = new GameState(playerDetailsList);
-					
-					System.out.println("A");
-					playerDetailsList.forEach(o -> {System.out.println(o);});
 					out.writeObject(gameState);
 					Thread.sleep(Game.REFRESH_INTERVAL);
-				}catch(InterruptedException e) {
-					System.err.println("Could Not Send Board.");
 				}
-
+			}catch(InterruptedException e) {
+				System.err.println("Could Not Send Board.");
 			}
+
 		}
 	}
 }
