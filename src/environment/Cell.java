@@ -79,12 +79,12 @@ public class Cell implements Serializable{
 				//System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: " + getPlayer().getIdentification() + " | Player: " + player.getIdentification()  +" wants to occupy ]");
 				available.await();
 			}
-			System.out.println("spot vacated, spawning player: " + player.getIdentification());
+//			System.out.println("spot vacated, spawning player: " + player.getIdentification());
 			this.player = player;
 		} catch (InterruptedException e) {
-			System.err.println("Thread Interrupted on SpawnPlayer!");
+//			System.err.println("Thread Interrupted on SpawnPlayer!");
 		} finally {
-			System.out.println("NOTIFY GAME");
+//			System.out.println("NOTIFY GAME");
 			game.notifyChange();
 			lock.unlock();
 		}
@@ -117,10 +117,11 @@ public class Cell implements Serializable{
 			}
 
 		} catch (InterruptedException e) {
-			if(game.running())
-				System.out.println("bot: " + player.getIdentification() + " interrupted after 2 seconds");
+			if(game.running()) {
+//				System.out.println("bot: " + player.getIdentification() + " interrupted after 2 seconds");
+			}
 			else {
-				System.err.println("Thread Interrupted on MovePlayer");
+//				System.err.println("Thread Interrupted on MovePlayer");
 				return;
 			}
 		} finally {

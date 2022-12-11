@@ -50,7 +50,7 @@ public class ClientGUI implements Observer{
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		System.out.println("REPAINT CLIENT GUI");
+//		System.out.println("REPAINT CLIENT GUI");
 		boardGui.repaint();
 	}
 	

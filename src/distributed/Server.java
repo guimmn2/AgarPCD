@@ -67,6 +67,7 @@ public class Server {
 
 				registerSlayer(ch);
 				ch.start();
+//				new ClientInputHandler(conSocket).start();
 
 			} catch (IOException e) {
 				System.err.println("Error starting Server");
@@ -82,7 +83,7 @@ public class Server {
 	}
 
 	private void registerSlayer(GameStateSender ch) {
-		System.out.println("Slayer ID " + game.getUsableIdentifier());
+//		System.out.println("Slayer ID " + game.getUsableIdentifier());
 		Slayer sl = new Slayer(game.getUsableIdentifier(), game, (byte) 5);
 		try {
 			game.addPlayerToGame(sl);
@@ -132,7 +133,7 @@ public class Server {
 			// Implementar as merditxas todas
 			try {
 				while (true) {
-					System.out.println("Sending contestants...");
+//					System.out.println("Sending contestants...");
 					ArrayList<Contestant> contestants = game.getContestants();
 
 					List<PlayerDetails> playerDetailsList = new ArrayList<>();
@@ -166,12 +167,10 @@ public class Server {
 
 		@Override
 		public void run() {
-			System.out.println("starting to serve client");
 			try {
 				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				serve();
 			} catch (IOException e) {
-				System.err.println("Error in server-client connection");
 			} finally {
 				try {
 					in.close(); 
@@ -183,11 +182,12 @@ public class Server {
 		}
 		
 		private void serve() throws IOException {
-			while (true) {
-				String clientInput = in.readLine();
-				System.out.println("client input: " + clientInput);
-				//parse
-			}
+//			while (true) {
+//				System.out.println("waiting for client input...");
+//				String clientInput = in.readLine();
+//				System.out.println("client input: " + clientInput);
+//				//parse
+//			}
 		}
 	}
 }

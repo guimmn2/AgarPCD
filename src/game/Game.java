@@ -60,7 +60,6 @@ public class Game extends Observable implements Serializable {
 	 * @throws InterruptedException
 	 */
 	public void addPlayerToGame(Contestant player) throws InterruptedException {
-		System.out.println("ADDING PLAYER TO GAME");
 		Cell initialPos = getRandomCell();
 		contestants.add(player);
 		initialPos.spawnPlayer(player);
