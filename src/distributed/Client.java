@@ -68,11 +68,12 @@ public class Client {
 
 		try {
 			while(true) {
-				List<Contestant> contestants = new ArrayList<>();
 				System.out.println("Waiting for server msg.");
-				contestants = ((ServerResponse) in.readObject()).getContestants();
-				System.out.println(contestants.size());
-				contestants.forEach(o -> {System.out.println(o);});
+				GameState gameState = (GameState) in.readObject();
+				List<PlayerDetails> playerDetailsList = gameState.getPlayerDetailsList();
+				
+				System.out.println("B");
+				playerDetailsList.forEach(o -> {System.out.println(o);});
 				
 			}
 		}catch(IOException | ClassNotFoundException e) {

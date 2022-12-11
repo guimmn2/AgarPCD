@@ -131,8 +131,18 @@ public class Server{
 
 					System.out.println("Sending contestants...");
 					ArrayList<Contestant> contestants = game.getContestants();
-					System.out.println("AAAAAAAAAAAAAAAAA" + contestants.size());
-					out.writeObject(new ServerResponse(contestants));
+				
+					List<PlayerDetails> playerDetailsList = new ArrayList<>();
+					for(Contestant c : contestants) {
+						PlayerDetails playerDetails = new PlayerDetails(c.getIdentification(), c.getCurrentStrength(), c.getCurrentCell().getPosition(), c.isHumanPlayer());
+						playerDetailsList.add(playerDetails);
+					}
+					
+					GameState gameState = new GameState(playerDetailsList);
+					
+					System.out.println("A");
+					playerDetailsList.forEach(o -> {System.out.println(o);});
+					out.writeObject(gameState);
 					Thread.sleep(Game.REFRESH_INTERVAL);
 				}catch(InterruptedException e) {
 					System.err.println("Could Not Send Board.");
