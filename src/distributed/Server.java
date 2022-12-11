@@ -17,15 +17,16 @@ import game.Slayer;
 import gui.GameGuiMain;
 import gui.ClientGUI;
 
-public class Server{
+public class Server {
 
 	private ServerSocket ss;
 	public static final int PORT = 8080;
-	Map<Slayer,ClientHandler> clientMap = new HashMap<Slayer,ClientHandler>();
+//	Map<Slayer, GameStateSender> clientMap = new HashMap<Slayer, GameStateSender>();
+	HashMap<Integer, Slayer> onlinePlayers = new HashMap<>();
 	Game game;
 	ClientGUI gui;
 
-	//private ClientHandlerSlapper clienthandlerslapper;
+	// private ClientHandlerSlapper clienthandlerslapper;
 
 	public static void main(String[] args) {
 		new Server().initServer();
@@ -39,18 +40,18 @@ public class Server{
 			startGame();
 			startServer();
 
-		}catch(IOException e) {
+		} catch (IOException e) {
 			System.err.println("Cannot init Server");
 			System.exit(1);
 		}
 	}
 
-	//Start Game Here?
+	// Start Game Here?
 	public void startGame() {
 		game = new Game();
 		new Thread(new GUIThread(game)).start();
-		//clienthandlerslapper = new ClientHandlerSlapper(Game.REFRESH_INTERVAL);
-		//clienthandlerslapper.start();
+		// clienthandlerslapper = new ClientHandlerSlapper(Game.REFRESH_INTERVAL);
+		// clienthandlerslapper.start();
 	}
 
 	public void startServer() {
@@ -60,9 +61,9 @@ public class Server{
 				Socket conSocket = ss.accept();
 
 				System.out.println("Connection received: " + conSocket.toString());
-				ClientHandler ch = new ClientHandler(conSocket);
+				GameStateSender ch = new GameStateSender(conSocket);
 
-				//clienthandlerslapper.addClientHandler(ch);
+				// clienthandlerslapper.addClientHandler(ch);
 
 				registerSlayer(ch);
 				ch.start();
@@ -75,29 +76,30 @@ public class Server{
 
 		try {
 			ss.close();
-		}catch(IOException e) {
+		} catch (IOException e) {
 			System.err.println("Error on server close");
 		}
 	}
 
-	private void registerSlayer(ClientHandler ch) {
-		System.out.println("Slayer ID "+game.getUsableIdentifier());
-		Slayer sl = new Slayer(game.getUsableIdentifier(), game, (byte)5);
+	private void registerSlayer(GameStateSender ch) {
+		System.out.println("Slayer ID " + game.getUsableIdentifier());
+		Slayer sl = new Slayer(game.getUsableIdentifier(), game, (byte) 5);
 		try {
 			game.addPlayerToGame(sl);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			System.err.println("Error adding player");
 		}
-		clientMap.put(sl, ch);
+		onlinePlayers.put(sl.getIdentification(), sl);
 	}
 
-	private class ClientHandler extends Thread {
+	// responsible for updating the clients with the new game state
+	private class GameStateSender extends Thread {
 		private ObjectOutputStream out;
-		private BufferedReader in;
+//		private BufferedReader in;
 		private Socket conSocket;
 
-		public ClientHandler(Socket socket) throws IOException {
+		public GameStateSender(Socket socket) {
 			conSocket = socket;
 		}
 
@@ -105,13 +107,13 @@ public class Server{
 		public void run() {
 			System.out.println("starting to serve client");
 			try {
-				setup();
+				out = new ObjectOutputStream(conSocket.getOutputStream());
 				serve();
 			} catch (IOException e) {
 				System.err.println("Error in server-client connection");
 			} finally {
-				try{
-					in.close(); 
+				try {
+//					in.close(); 
 					out.close();
 					conSocket.close();
 				} catch (IOException e) {
@@ -120,25 +122,26 @@ public class Server{
 			}
 		}
 
-		void setup() throws IOException {
-			out = new ObjectOutputStream(conSocket.getOutputStream());
-			in = new BufferedReader(new InputStreamReader(conSocket.getInputStream()));
-		}
+//		void setup() throws IOException {
+//			out = new ObjectOutputStream(conSocket.getOutputStream());
+//			in = new BufferedReader(new InputStreamReader(conSocket.getInputStream()));
+//		}
 
 		private void serve() throws IOException {
 
-
-			try{//Implementar as merditxas todas
-				while(true) {
+			// Implementar as merditxas todas
+			try {
+				while (true) {
 					System.out.println("Sending contestants...");
 					ArrayList<Contestant> contestants = game.getContestants();
 
 					List<PlayerDetails> playerDetailsList = new ArrayList<>();
-					for(Contestant c : contestants) {
-						if(c.getCurrentCell() == null) {
+					for (Contestant c : contestants) {
+						if (c.getCurrentCell() == null) {
 							continue;
 						}
-						PlayerDetails playerDetails = new PlayerDetails(c.getIdentification(), c.getCurrentStrength(), c.getCurrentCell().getPosition(), c.isHumanPlayer());
+						PlayerDetails playerDetails = new PlayerDetails(c.getIdentification(), c.getCurrentStrength(),
+								c.getCurrentCell().getPosition(), c.isHumanPlayer());
 						playerDetailsList.add(playerDetails);
 					}
 
@@ -146,10 +149,45 @@ public class Server{
 					out.writeObject(gameState);
 					Thread.sleep(Game.REFRESH_INTERVAL);
 				}
-			}catch(InterruptedException e) {
+			} catch (InterruptedException e) {
 				System.err.println("Could Not Send Board.");
 			}
 
+		}
+	}
+
+	public class ClientInputHandler extends Thread {
+		private BufferedReader in;
+		private Socket socket;
+
+		public ClientInputHandler(Socket socket) {
+			this.socket = socket;
+		}
+
+		@Override
+		public void run() {
+			System.out.println("starting to serve client");
+			try {
+				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				serve();
+			} catch (IOException e) {
+				System.err.println("Error in server-client connection");
+			} finally {
+				try {
+					in.close(); 
+					socket.close();
+				} catch (IOException e) {
+					System.err.println("Error while closing server-client connection... Abort");
+				}
+			}
+		}
+		
+		private void serve() throws IOException {
+			while (true) {
+				String clientInput = in.readLine();
+				System.out.println("client input: " + clientInput);
+				//parse
+			}
 		}
 	}
 }

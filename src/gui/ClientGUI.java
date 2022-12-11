@@ -57,4 +57,8 @@ public class ClientGUI implements Observer{
 	public Game getGame() {
 		return game;
 	}
+	
+	public BoardJComponent getUI() {
+		return boardGui;
+	}
 }

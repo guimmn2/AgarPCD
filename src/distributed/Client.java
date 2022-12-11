@@ -84,4 +84,7 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
+	
+	public class InputSender extends Thread {
+	}
 }
