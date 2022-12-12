@@ -1,28 +1,36 @@
 package gui;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JFrame;
 
+import distributed.PlayerDetails;
+import environment.Cell;
+import environment.Direction;
+import game.Contestant;
+import game.Daemon;
 import game.Game;
+import game.Slayer;
 
-public class GameGuiMain implements Observer {
+public class ClientGUI implements Observer{
 	private JFrame frame = new JFrame("pcd.io");
 	private BoardJComponent boardGui;
 	private Game game;
+	private boolean alternativeKeys;
 
-	public GameGuiMain(Game game) {
+	public ClientGUI(boolean alternativeKeys) {
 		super();
-		this.game = game;
+		this.alternativeKeys = alternativeKeys;
+		game = new Game();
 		game.addObserver(this);
-
+		
 		buildGui();
-
 	}
 
 	private void buildGui() {
-		boardGui = new BoardJComponent(game, false);
+		boardGui = new BoardJComponent(game, alternativeKeys);
 		frame.add(boardGui);
 
 
@@ -41,16 +49,24 @@ public class GameGuiMain implements Observer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		game.createThreads();
 	}
-
+	
 	@Override
 	public void update(Observable o, Object arg) {
+//		System.out.println("REPAINT CLIENT GUI");
 		boardGui.repaint();
 	}
-
+	
 	public Game getGame() {
 		return game;
 	}
-
+	
+	public BoardJComponent getBoard() {
+		return boardGui;
+	}
+	
+	public Direction getLastDir() {
+		Direction dir = boardGui.getLastPressedDirection();
+		return dir;
+	}
 }

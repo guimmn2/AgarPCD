@@ -1,15 +1,16 @@
 package environment;
 
+import java.io.Serializable;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import game.Contestant;
 import game.Daemon;
-import game.ThreadSlapper;
 import game.Game;
+import game.ThreadSlapper;
 
-public class Cell {
+public class Cell implements Serializable {
 	private Coordinate position;
 	private Game game;
 	private Contestant player = null;
@@ -27,7 +28,7 @@ public class Cell {
 	public Coordinate getPosition() {
 		return position;
 	}
-	
+
 	public boolean isEmpty() {
 		return player == null;
 	}
@@ -43,8 +44,8 @@ public class Cell {
 	public Contestant getPlayer() {
 		return player;
 	}
-	
-	private void setPlayer(Contestant player) {
+
+	public void setPlayer(Contestant player) {
 		this.player = player;
 	}
 
@@ -74,14 +75,20 @@ public class Cell {
 			// TODO
 			// if a player is put in a place where lies an obstacle. Unlikely, but possible
 			// gets same treatment as Daemon that chooses Cell with obstacle
-			while (hasLivingPlayer()) {
-				System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: " + getPlayer().getIdentification() + " | Player: " + player.getIdentification()  +" wants to occupy ]");
+			if (hasObstacle()) {
+				System.err.println("CANT SPAWN DEAD PLAYER: " + player.getIdentification());
+				game.addPlayerToGame(player);
+				return;
+			}
+
+			while (hasLivingPlayer() && game.running()) {
+				System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: "
+						+ getPlayer().getIdentification() + " | Player: " + player.getIdentification()
+						+ " wants to occupy ]");
 				available.await();
 			}
-			System.out.println("spot vacated, spawning player: " + player.getIdentification());
 			this.player = player;
 		} catch (InterruptedException e) {
-			e.printStackTrace();
 		} finally {
 			game.notifyChange();
 			lock.unlock();
@@ -100,22 +107,20 @@ public class Cell {
 		movingPlayerCellLock.lock();
 		lock.lock();
 		try {
-			while (hasObstacle() && player instanceof Daemon) {
-				System.out.println("bot: " + player.getIdentification() + " tried to move to: " + getPosition() + ", has obstacle");
+			while (hasObstacle() && player instanceof Daemon && game.running()) {
 				new ThreadSlapper(Thread.currentThread()).start();
 				punishment.await();
 			}
-			if (!hasLivingPlayer()) {
+			if (!hasLivingPlayer() && game.running()) {
 				player.getCurrentCell().leave();
 				setPlayer(player);
-			} else {
+			} else if (game.running()) {
 				Contestant occupying = getPlayer();
-				if (occupying.isAlive() && occupying.getCurrentStrength() < 10)
+				if (occupying.isAlive() && occupying.getCurrentStrength() < 10 && game.running())
 					fight(player, occupying);
 			}
 
 		} catch (InterruptedException e) {
-			System.out.println("bot: " + player.getIdentification() + " interrupted after 2 seconds");
 		} finally {
 			game.notifyChange();
 			lock.unlock();
@@ -124,11 +129,10 @@ public class Cell {
 	}
 
 	private void fight(Contestant one, Contestant two) {
-		System.out.println("player one: " + one.getIdentification() + " fighting with player two: " + two.getIdentification());
-		if (one.getCurrentStrength() > two.getCurrentStrength()) {
+		if (one.getCurrentStrength() > two.getCurrentStrength() && game.running()) {
 			one.increaseStrengthBy(two.getCurrentStrength());
 			two.increaseStrengthBy((byte) -two.getCurrentStrength());
-		} else {
+		} else if (game.running()) {
 			two.increaseStrengthBy(two.getCurrentStrength());
 			one.increaseStrengthBy((byte) -one.getCurrentStrength());
 		}

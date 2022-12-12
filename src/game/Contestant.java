@@ -2,6 +2,8 @@ package game;
 
 
 
+import java.io.Serializable;
+
 import environment.Cell;
 
 /**
@@ -11,7 +13,7 @@ import environment.Cell;
  * Parent class for Daemon (bot) and Slayer (human)
  *
  */
-public abstract class Contestant  {
+public abstract class Contestant  implements Serializable{
 
 
 	protected  Game game;
@@ -39,19 +41,23 @@ public abstract class Contestant  {
 		currentStrength=strength;
 		originalStrength=strength;
 	}
-
+	
 	public abstract boolean isHumanPlayer();
 	public abstract void movement();
 	
 	public void move() {
 		try {
-			while(isAlive() && currentStrength < 10) {
+			while(isAlive() && currentStrength < 10  && game.running()) {
 				movement();
 				Thread.sleep(originalStrength*Game.REFRESH_INTERVAL);
 			}
+			if (currentStrength == 10) {
+				game.decrementLatch();
+			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Thread Interrupted on Move!");
+			return;
 		}
 	}
 	
