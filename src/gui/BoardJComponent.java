@@ -84,8 +84,7 @@ public class BoardJComponent extends JComponent implements KeyListener {
 					((Graphics2D) g).setStroke(new BasicStroke(5));
 					Font font = g.getFont().deriveFont( (float)cellHeight);
 					g.setFont( font );
-					//String strengthMarking=(contestant.getCurrentStrength()>=10?"X":""+contestant.getCurrentStrength());
-					String strengthMarking=(contestant.getCurrentStrength()==10?"X":""+contestant.getIdentification());
+					String strengthMarking=(contestant.getCurrentStrength()>=10?"X":""+contestant.getCurrentStrength());
 					g.drawString(strengthMarking,
 							(int) ((p.x + .2) * cellWidth),
 							(int) ((p.y + .9) * cellHeight));

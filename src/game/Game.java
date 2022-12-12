@@ -32,8 +32,6 @@ public class Game extends Observable implements Serializable {
 	private int usableIdentifier = 0;
 	
 	
-	//private int numFinishedPlayers;
-
 	public Game() {
 		running = true;
 		board = new Cell[Game.DIMX][Game.DIMY];
@@ -43,10 +41,6 @@ public class Game extends Observable implements Serializable {
 				board[x][y] = new Cell(new Coordinate(x, y), this);
 	}
 	
-//	public synchronized void incrementNumFinishedPlayers() {
-//		numFinishedPlayers++;
-//	}
-//	
 	public void decrementLatch() {
 		portõesDaQuinta.countDown();
 	}
@@ -147,16 +141,6 @@ public class Game extends Observable implements Serializable {
 		return newCell;
 	}
 
-	// for testing purposes
-	public synchronized Cell getOccupiedCell() {
-		for (int x = 0; x < Game.DIMX; x++) {
-			for (int y = 0; y < Game.DIMY; y++) {
-				if (board[x][y].hasObstacle())
-					return board[x][y];
-			}
-		}
-		return null;
-	}
 
 	/**
 	 * Updates GUI. Should be called anytime the game state changes

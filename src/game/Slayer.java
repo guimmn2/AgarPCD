@@ -1,7 +1,6 @@
 package game;
 
 import environment.Cell;
-import environment.Coordinate;
 import environment.Direction;
 
 /**
@@ -34,7 +33,5 @@ public class Slayer extends Contestant implements Runnable {
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-
 	}
 }

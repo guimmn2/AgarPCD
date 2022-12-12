@@ -87,9 +87,7 @@ public class Client {
 
 		try {
 			while (true) {
-//				System.out.println("Waiting for server msg.");
 				GameState gameState = (GameState) in.readObject();
-//				System.out.println("Received server msg.");
 				game.clearBoard();
 
 				List<PlayerDetails> playerDetailsList = gameState.getPlayerDetailsList();

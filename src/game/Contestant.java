@@ -4,7 +4,6 @@ package game;
 
 import java.io.Serializable;
 
-import distributed.PlayerDetails;
 import environment.Cell;
 
 /**

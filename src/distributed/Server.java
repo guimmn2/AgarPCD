@@ -48,8 +48,6 @@ public class Server {
 	public void startGame() {
 		game = new Game();
 		new Thread(new GUIThread(game)).start();
-		// clienthandlerslapper = new ClientHandlerSlapper(Game.REFRESH_INTERVAL);
-		// clienthandlerslapper.start();
 	}
 
 	public void startServer() {
@@ -60,8 +58,6 @@ public class Server {
 
 				System.out.println("Connection received: " + conSocket.toString());
 				GameStateSender sender = new GameStateSender(conSocket);
-
-				// clienthandlerslapper.addClientHandler(ch);
 
 				registerSlayer(conSocket);
 				sender.start();
@@ -80,14 +76,12 @@ public class Server {
 	}
 
 	private void registerSlayer(Socket socket) {
-//		System.out.println("Slayer ID " + game.getUsableIdentifier());
 		Slayer sl = new Slayer(game.getUsableIdentifier(), game, (byte) 5);
 		try {
 			game.addPlayerToGame(sl);
 			new ClientInputHandler(socket, sl.getIdentification()).start();;
 			clientMap.put(sl.getIdentification(), sl);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			System.err.println("Error adding player");
 		}
 	}
@@ -95,7 +89,6 @@ public class Server {
 	// responsible for updating the clients with the new game state
 	private class GameStateSender extends Thread {
 		private ObjectOutputStream out;
-//		private BufferedReader in;
 		private Socket conSocket;
 
 		public GameStateSender(Socket socket) {
@@ -112,7 +105,6 @@ public class Server {
 				System.err.println("Error in server-client connection");
 			} finally {
 				try {
-//					in.close(); 
 					out.close();
 					conSocket.close();
 				} catch (IOException e) {
@@ -121,17 +113,10 @@ public class Server {
 			}
 		}
 
-//		void setup() throws IOException {
-//			out = new ObjectOutputStream(conSocket.getOutputStream());
-//			in = new BufferedReader(new InputStreamReader(conSocket.getInputStream()));
-//		}
-
 		private void serve() throws IOException {
 
-			// Implementar as merditxas todas
 			try {
 				while (true) {
-//					System.out.println("Sending contestants...");
 					ArrayList<Contestant> contestants = game.getContestants();
 
 					List<PlayerDetails> playerDetailsList = new ArrayList<>();
