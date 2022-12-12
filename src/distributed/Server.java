@@ -171,6 +171,8 @@ public class Server {
 				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				serve();
 			} catch (IOException e) {
+				game.removePlayerFromCell(clientMap.get(id).getCurrentCell().getPosition());
+				clientMap.remove(id);
 			} finally {
 				try {
 					in.close(); 

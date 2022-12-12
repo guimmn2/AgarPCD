@@ -69,6 +69,10 @@ public class Game extends Observable implements Serializable {
 		getCell(pos).spawnPlayer(player);
 	}
 	
+	public void removePlayerFromCell(Coordinate pos) {
+		getCell(pos).setPlayer(null);
+	}
+	
 	public int getUsableIdentifier() {
 		int ID = usableIdentifier;
 		usableIdentifier++;

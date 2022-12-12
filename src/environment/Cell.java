@@ -45,7 +45,7 @@ public class Cell implements Serializable{
 		return player;
 	}
 	
-	private void setPlayer(Contestant player) {
+	public void setPlayer(Contestant player) {
 		this.player = player;
 	}
 
@@ -75,8 +75,14 @@ public class Cell implements Serializable{
 			// TODO
 			// if a player is put in a place where lies an obstacle. Unlikely, but possible
 			// gets same treatment as Daemon that chooses Cell with obstacle
+			if(hasObstacle()) {
+				System.err.println("CANT SPAWN DEAD PLAYER: " + player.getIdentification());
+				game.addPlayerToGame(player);
+				return;
+			}
+			
 			while (hasLivingPlayer() && game.running()) {
-				//System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: " + getPlayer().getIdentification() + " | Player: " + player.getIdentification()  +" wants to occupy ]");
+				System.out.println("Concurrence Ocurred!\n[Pos: " + getPosition() + "| Occupied by: " + getPlayer().getIdentification() + " | Player: " + player.getIdentification()  +" wants to occupy ]");
 				available.await();
 			}
 //			System.out.println("spot vacated, spawning player: " + player.getIdentification());

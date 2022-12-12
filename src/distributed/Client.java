@@ -32,6 +32,7 @@ public class Client {
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		Client clt = new Client("localhost");
+
 		addr = InetAddress.getByName(args[0]);
 		port = Integer.parseInt(args[1]);
 		if(args[2].equals("0")) {
