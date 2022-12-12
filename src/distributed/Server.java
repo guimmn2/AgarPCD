@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import environment.Direction;
 import game.Contestant;
 import game.Game;
 import game.Slayer;
@@ -185,7 +186,38 @@ public class Server {
 				System.out.println("waiting for client input...");
 				String clientInput = in.readLine();
 				System.out.println("client input: " + clientInput);
-				clientMap.get(id).movement();
+				
+				Slayer sl = clientMap.get(id);
+				
+				switch (clientInput) {
+				case "UP":
+					sl.moveKeys(Direction.UP);
+					break;
+				case "LEFT":
+					sl.moveKeys(Direction.LEFT);
+					break;
+				case "RIGHT":
+					sl.moveKeys(Direction.RIGHT);
+					break;
+					
+				case "DOWN":
+					sl.moveKeys(Direction.DOWN);
+					break;
+					
+				case "W":
+					sl.moveKeys(Direction.UP);
+					break;
+				case "A":
+					sl.moveKeys(Direction.LEFT);
+					break;
+				case "D":
+					sl.moveKeys(Direction.RIGHT);
+					break;
+					
+				case "S":
+					sl.moveKeys(Direction.DOWN);
+					break;
+				}
 			}
 		}
 	}

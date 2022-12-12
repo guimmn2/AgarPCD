@@ -18,9 +18,11 @@ public class ClientGUI implements Observer{
 	private JFrame frame = new JFrame("pcd.io");
 	private BoardJComponent boardGui;
 	private Game game;
+	private boolean alternativeKeys;
 
-	public ClientGUI() {
+	public ClientGUI(boolean alternativeKeys) {
 		super();
+		this.alternativeKeys = alternativeKeys;
 		game = new Game();
 		game.addObserver(this);
 		
@@ -28,7 +30,7 @@ public class ClientGUI implements Observer{
 	}
 
 	private void buildGui() {
-		boardGui = new BoardJComponent(game, false);
+		boardGui = new BoardJComponent(game, alternativeKeys);
 		frame.add(boardGui);
 
 

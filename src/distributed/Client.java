@@ -25,10 +25,23 @@ public class Client {
 	private Game game;
 
 	private KeyListener keyListener;
-	private boolean alternativeKeys = false;
+	private static boolean alternativeKeys = false;
+	
+	private static InetAddress addr;
+	private static int port;
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		Client clt = new Client("localhost");
+		addr = InetAddress.getByName(args[0]);
+		port = Integer.parseInt(args[1]);
+		if(args[2].equals("0")) {
+			alternativeKeys = false;
+		}else if(args[2].equals("1")) {
+			alternativeKeys = true;
+		}else{
+			throw new IllegalArgumentException();
+		}
+		
 		clt.run();
 	}
 
@@ -45,9 +58,8 @@ public class Client {
 	// server related
 	public void connectToServer() {
 		try {
-			InetAddress addr = InetAddress.getByName(null);
-			conSocket = new Socket(addr, Server.PORT);
-			System.out.println("connecting to address: " + addr + " on port: " + Server.PORT);
+			conSocket = new Socket(addr, port);
+			System.out.println("connecting to address: " + addr + " on port: " + port);
 		} catch (IOException e) {
 			System.err.println("Error connecting to server.");
 			System.exit(1);
@@ -65,7 +77,7 @@ public class Client {
 
 	@SuppressWarnings("unchecked")
 	public void communicateWithServer() {
-		clientGUI = new ClientGUI();
+		clientGUI = new ClientGUI(alternativeKeys);
 		clientGUI.init();
 		game = clientGUI.getGame();
 
