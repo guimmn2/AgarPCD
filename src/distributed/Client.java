@@ -1,5 +1,7 @@
 package distributed;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,9 +11,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
 
-import environment.Direction;
 import game.Game;
-import gui.BoardJComponent;
 import gui.ClientGUI;
 
 public class Client {
@@ -23,6 +23,9 @@ public class Client {
 
 	private ClientGUI clientGUI;
 	private Game game;
+
+	private KeyListener keyListener;
+	private boolean alternativeKeys = false;
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		Client clt = new Client("localhost");
@@ -87,23 +90,67 @@ public class Client {
 
 	public class InputSender extends Thread {
 
-		private void verifyAndSendInput() {
-
-			Direction dir = clientGUI.getLastDir();
-			if (dir != null) {
-				System.out.println("Thread "+ dir);
-
-//				System.out.println("sending dir to server: " + dir.getVector().toString());
-//				out.write(dir.getVector().toString());
-//				clientGUI.getUI().clearLastPressedDirection();
-			}
-		}
-
 		@Override
 		public void run() {
-			while (true) {
-				verifyAndSendInput();
-			}
+			keyListener = new KeyListener() {
+
+				@Override
+				public void keyTyped(KeyEvent e) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (alternativeKeys) {
+						switch (e.getKeyCode()) {
+						case KeyEvent.VK_A:
+							System.out.println("sending: " + environment.Direction.LEFT.toString());
+							out.write(environment.Direction.LEFT.toString());
+							break;
+						case KeyEvent.VK_D:
+							System.out.println("sending: " + environment.Direction.RIGHT.toString());
+							out.write(environment.Direction.RIGHT.toString());
+							break;
+						case KeyEvent.VK_W:
+							System.out.println("sending: " + environment.Direction.UP.toString());
+							out.write(environment.Direction.UP.toString());
+							break;
+						case KeyEvent.VK_S:
+							System.out.println("sending: " + environment.Direction.DOWN.toString());
+							out.write(environment.Direction.DOWN.toString());
+							break;
+						}
+					} else {
+						switch (e.getKeyCode()) {
+						case KeyEvent.VK_LEFT:
+							System.out.println("sending: " + environment.Direction.LEFT.toString());
+							out.write(environment.Direction.LEFT.toString());
+							break;
+						case KeyEvent.VK_RIGHT:
+							System.out.println("sending: " + environment.Direction.RIGHT.toString());
+							out.write(environment.Direction.RIGHT.toString());
+							break;
+						case KeyEvent.VK_UP:
+							System.out.println("sending: " + environment.Direction.UP.toString());
+							out.write(environment.Direction.UP.toString());
+							break;
+						case KeyEvent.VK_DOWN:
+							System.out.println("sending: " + environment.Direction.DOWN.toString());
+							out.write(environment.Direction.DOWN.toString());
+							break;
+						}
+					}
+				}
+
+				@Override
+				public void keyReleased(KeyEvent e) {
+					// TODO Auto-generated method stub
+
+				}
+
+			};
+			clientGUI.getBoard().addKeyListener(keyListener);
 		}
 	}
 }

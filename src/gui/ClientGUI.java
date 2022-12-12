@@ -59,7 +59,7 @@ public class ClientGUI implements Observer{
 		return game;
 	}
 	
-	public BoardJComponent getUI() {
+	public BoardJComponent getBoard() {
 		return boardGui;
 	}
 	

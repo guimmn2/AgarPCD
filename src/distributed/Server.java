@@ -67,7 +67,7 @@ public class Server {
 
 				registerSlayer(ch);
 				ch.start();
-//				new ClientInputHandler(conSocket).start();
+				new ClientInputHandler(conSocket).start();
 
 			} catch (IOException e) {
 				System.err.println("Error starting Server");
@@ -182,12 +182,12 @@ public class Server {
 		}
 		
 		private void serve() throws IOException {
-//			while (true) {
-//				System.out.println("waiting for client input...");
-//				String clientInput = in.readLine();
-//				System.out.println("client input: " + clientInput);
-//				//parse
-//			}
+			while (true) {
+				System.out.println("waiting for client input...");
+				String clientInput = in.readLine();
+				System.out.println("client input: " + clientInput);
+				//parse
+			}
 		}
 	}
 }
