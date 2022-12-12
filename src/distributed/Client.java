@@ -105,39 +105,31 @@ public class Client {
 					if (alternativeKeys) {
 						switch (e.getKeyCode()) {
 						case KeyEvent.VK_A:
-							System.out.println("sending: " + environment.Direction.LEFT.toString());
-							out.write(environment.Direction.LEFT.toString());
+							out.println(environment.Direction.LEFT.toString());
 							break;
 						case KeyEvent.VK_D:
-							System.out.println("sending: " + environment.Direction.RIGHT.toString());
-							out.write(environment.Direction.RIGHT.toString());
+							out.println(environment.Direction.RIGHT.toString());
 							break;
 						case KeyEvent.VK_W:
-							System.out.println("sending: " + environment.Direction.UP.toString());
-							out.write(environment.Direction.UP.toString());
+							out.println(environment.Direction.UP.toString());
 							break;
 						case KeyEvent.VK_S:
-							System.out.println("sending: " + environment.Direction.DOWN.toString());
-							out.write(environment.Direction.DOWN.toString());
+							out.println(environment.Direction.DOWN.toString());
 							break;
 						}
 					} else {
 						switch (e.getKeyCode()) {
 						case KeyEvent.VK_LEFT:
-							System.out.println("sending: " + environment.Direction.LEFT.toString());
-							out.write(environment.Direction.LEFT.toString());
+							out.println(environment.Direction.LEFT.toString());
 							break;
 						case KeyEvent.VK_RIGHT:
-							System.out.println("sending: " + environment.Direction.RIGHT.toString());
-							out.write(environment.Direction.RIGHT.toString());
+							out.println(environment.Direction.RIGHT.toString());
 							break;
 						case KeyEvent.VK_UP:
-							System.out.println("sending: " + environment.Direction.UP.toString());
-							out.write(environment.Direction.UP.toString());
+							out.println(environment.Direction.UP.toString());
 							break;
 						case KeyEvent.VK_DOWN:
-							System.out.println("sending: " + environment.Direction.DOWN.toString());
-							out.write(environment.Direction.DOWN.toString());
+							out.println(environment.Direction.DOWN.toString());
 							break;
 						}
 					}

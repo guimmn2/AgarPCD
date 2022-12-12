@@ -9,20 +9,17 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import game.Contestant;
 import game.Game;
 import game.Slayer;
-import gui.GameGuiMain;
 import gui.ClientGUI;
 
 public class Server {
 
 	private ServerSocket ss;
 	public static final int PORT = 8080;
-//	Map<Slayer, GameStateSender> clientMap = new HashMap<Slayer, GameStateSender>();
-	HashMap<Integer, Slayer> onlinePlayers = new HashMap<>();
+	HashMap<Integer, Slayer> clientMap = new HashMap<>();
 	Game game;
 	ClientGUI gui;
 
@@ -61,13 +58,12 @@ public class Server {
 				Socket conSocket = ss.accept();
 
 				System.out.println("Connection received: " + conSocket.toString());
-				GameStateSender ch = new GameStateSender(conSocket);
+				GameStateSender sender = new GameStateSender(conSocket);
 
 				// clienthandlerslapper.addClientHandler(ch);
 
-				registerSlayer(ch);
-				ch.start();
-				new ClientInputHandler(conSocket).start();
+				registerSlayer(conSocket);
+				sender.start();
 
 			} catch (IOException e) {
 				System.err.println("Error starting Server");
@@ -82,16 +78,17 @@ public class Server {
 		}
 	}
 
-	private void registerSlayer(GameStateSender ch) {
+	private void registerSlayer(Socket socket) {
 //		System.out.println("Slayer ID " + game.getUsableIdentifier());
 		Slayer sl = new Slayer(game.getUsableIdentifier(), game, (byte) 5);
 		try {
 			game.addPlayerToGame(sl);
+			new ClientInputHandler(socket, sl.getIdentification()).start();;
+			clientMap.put(sl.getIdentification(), sl);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			System.err.println("Error adding player");
 		}
-		onlinePlayers.put(sl.getIdentification(), sl);
 	}
 
 	// responsible for updating the clients with the new game state
@@ -160,9 +157,11 @@ public class Server {
 	public class ClientInputHandler extends Thread {
 		private BufferedReader in;
 		private Socket socket;
+		private int id;
 
-		public ClientInputHandler(Socket socket) {
+		public ClientInputHandler(Socket socket, int id) {
 			this.socket = socket;
+			this.id = id;
 		}
 
 		@Override
@@ -186,7 +185,7 @@ public class Server {
 				System.out.println("waiting for client input...");
 				String clientInput = in.readLine();
 				System.out.println("client input: " + clientInput);
-				//parse
+				clientMap.get(id).movement();
 			}
 		}
 	}
